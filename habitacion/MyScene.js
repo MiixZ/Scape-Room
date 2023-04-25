@@ -58,6 +58,8 @@ class MyScene extends THREE.Scene {
         this.model.scale.y = 1.5;
         this.mesa = new mesa(this.gui, "mesa");
         this.mesa.position.x = this.WidthH / 2 -50;
+        this.mesa.scale.z = 1.3;
+        this.mesa.scale.y = 1.2;
         this.add (this.model);
         this.add(this.mesa);
     }

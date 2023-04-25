@@ -4,7 +4,7 @@ import * as CSG from '../libs/CSG-v2.js'
 class habitacion extends THREE.Object3D {
     WidthH = 750;
     HeightH = 150;
-    DepthH = 750;
+    DepthH = 1500;
     constructor(gui, titleGui) {
         super();
 
@@ -25,21 +25,19 @@ class habitacion extends THREE.Object3D {
         var pared1, pared2, pared3, pared4;
 
         var geometryPared = new THREE.BoxGeometry (0.2, this.HeightH, this.DepthH);
+        var geometryPared2 = new THREE.BoxGeometry (this.WidthH, this.HeightH, 0.2);
         var texture = new THREE.TextureLoader().load('../imgs/roble_oscuro.jpg');
         var materialPared = new THREE.MeshPhongMaterial ({map: texture});
 
         pared1 = new THREE.Mesh(geometryPared, materialPared);
         pared2 = new THREE.Mesh(geometryPared, materialPared);
-        pared3 = new THREE.Mesh(geometryPared, materialPared);
-        pared4 = new THREE.Mesh(geometryPared, materialPared);
+        pared3 = new THREE.Mesh(geometryPared2, materialPared);
+        pared4 = new THREE.Mesh(geometryPared2, materialPared);
 
         pared1.position.set(-this.WidthH / 2, this.HeightH / 2, 0);
         pared2.position.set(this.WidthH / 2, this.HeightH / 2, 0);
         pared3.position.set(0, this.HeightH / 2, this.DepthH / 2);
         pared4.position.set(0, this.HeightH / 2, -this.DepthH / 2);
-
-        pared3.rotation.y = Math.PI/2;
-        pared4.rotation.y = Math.PI/2;
 
         this.add(pared1, pared2, pared3, pared4);
     }
