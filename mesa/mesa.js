@@ -9,6 +9,9 @@ class mesa extends THREE.Object3D {
     pata4;
     superficie;
     jarronMesa;
+    mesaWidth = 100;
+    mesaHeight = 50;
+    mesaDepth = 200;
 
     constructor(gui, titleGui) {
         super();
@@ -67,37 +70,37 @@ class mesa extends THREE.Object3D {
         // Cilindro 3 -> Pata trasera derecha.
         // Cilindro 4 -> Pata trasera izquierda.
 
-        this.pata.position.y = 2;
-        this.pata2.position.y = 2;
-        this.pata3.position.y = 2;
-        this.pata4.position.y = 2;
-        this.superficie.position.y = 4; // Encima de los cilindros.
-        this.jarronMesa.position.y = 4.2;
+        this.jarronMesa.scale.set(10, 10, 10);
 
-        this.pata.position.x = 2;
-        this.pata2.position.x = 2;
-        this.pata3.position.x = -2;
-        this.pata4.position.x = -2;
-        this.superficie.position.x = 0;
-        this.jarronMesa.position.x = -1.5;
+        this.pata.position.y = this.mesaHeight / 2;
+        this.pata2.position.y = this.mesaHeight / 2;
+        this.pata3.position.y = this.mesaHeight / 2;
+        this.pata4.position.y = this.mesaHeight / 2;
+        this.superficie.position.y = this.mesaHeight; // Encima de los cilindros.
+        this.jarronMesa.position.y = this.mesaHeight;
 
-        this.pata.position.z = -2;
-        this.pata2.position.z = 2;
-        this.pata3.position.z = -2;
-        this.pata4.position.z = 2;
-        this.superficie.position.z = 0;
-        this.jarronMesa.position.z = -1;
+        this.pata.position.x = this.mesaWidth / 3;
+        this.pata2.position.x = this.mesaWidth / 3;
+        this.pata3.position.x = -this.mesaWidth / 3;
+        this.pata4.position.x = -this.mesaWidth / 3;
+        this.jarronMesa.position.x = -this.mesaWidth / 4;
+
+        this.pata.position.z = -this.mesaDepth/ 3;
+        this.pata2.position.z = this.mesaDepth/ 3;
+        this.pata3.position.z = -this.mesaDepth/ 3;
+        this.pata4.position.z = this.mesaDepth/ 3;
+        this.jarronMesa.position.z = this.mesaWidth / 2;
     }
 
     createCuadrado() {
-        var SuperficieGeom = new THREE.BoxGeometry(6.5, 0.5, 6.5, 10, 10, 10);
+        var SuperficieGeom = new THREE.BoxGeometry(this.mesaWidth, 1, this.mesaDepth, 10, 10, 10);
         var superficieMaterial = new THREE.MeshPhongMaterial({color: 0xcd853f});
 
         return new THREE.Mesh(SuperficieGeom, superficieMaterial);
     }
 
     createCilindro() {
-        var cilindroGeom = new THREE.CylinderGeometry(0.3, 0.3, 4);
+        var cilindroGeom = new THREE.CylinderGeometry(3, 3, this.mesaHeight);
         var cilindroMaterial = new THREE.MeshPhongMaterial({color: 0x654321});
 
         return new THREE.Mesh(cilindroGeom, cilindroMaterial);
