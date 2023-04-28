@@ -11,6 +11,7 @@ import { Stats } from '../libs/stats.module.js'
 import { jarron } from '../jarron/jarron.js'
 import { mesa } from '../mesa/mesa.js'
 import { habitacion } from './habitacion.js'
+import { Corazon } from '../corazon/Corazon.js'
 
 
 /// La clase fachada del modelo
@@ -60,8 +61,15 @@ class MyScene extends THREE.Scene {
         this.mesa.position.x = this.WidthH / 2 -50;
         this.mesa.scale.z = 1.3;
         this.mesa.scale.y = 1.2;
-        this.add (this.model);
         this.add(this.mesa);
+        this.add (this.model);
+
+        this.corazon = new Corazon();
+        this.corazon.position.x = this.WidthH / 2 - 30;
+        this.corazon.position.y = this.HeightH / 2;
+        this.add(this.corazon);
+
+
     }
 
     initStats() {
@@ -230,6 +238,7 @@ class MyScene extends THREE.Scene {
 
         // Se actualiza el resto del modelo
         this.model.update();
+        this.corazon.update();
 
         // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
         this.renderer.render (this, this.getCamera());
@@ -237,7 +246,8 @@ class MyScene extends THREE.Scene {
         // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
         // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
-        requestAnimationFrame(() => this.update())
+        requestAnimationFrame(() => this.update());
+
     }
 }
 
