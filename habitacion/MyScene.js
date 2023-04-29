@@ -5,6 +5,7 @@ import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
+import * as KeyCode from '../libs/keycode.esm.js';
 
 // Clases de mi proyecto
 
@@ -41,7 +42,7 @@ class MyScene extends THREE.Scene {
         // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
         this.createLights ();
 
-        // Tendremos una cámara con un control de movimiento con el ratón
+        // Tendremos una cámara con un control de movimiento con el ratón.
         this.createCamera ();
 
         // Un suelo
@@ -92,7 +93,7 @@ class MyScene extends THREE.Scene {
         //   El ángulo del campo de visión en grados sexagesimales
         //   La razón de aspecto ancho/alto
         //   Los planos de recorte cercano y lejano
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        /*this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         // También se indica dónde se coloca
         this.camera.position.set (20, this.HeightH*1.3, 20);
         // Y hacia dónde mira
@@ -108,28 +109,39 @@ class MyScene extends THREE.Scene {
         this.cameraControl.panSpeed = 0.5;
 
         // Debe orbitar con respecto al punto de mira de la cámara
-        this.cameraControl.target = look;
+        this.cameraControl.target = look;*/
+
+        this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera.position.set (0.1, this.HeightH, 0.1);
+        var look = new THREE.Vector3 (this.WidthH/2,0,0);
+        this.camera.lookAt(look);
+
+        this.add( this.camera );
     }
 
-    createGround () {
-        // El suelo es un Mesh, necesita una geometría y un material.
+    actualizarTeclas(event) {
+        const x = event.which || event.key;
+        const velocidadMovimiento = 0.1;
+        const velocidadRotacion = Math.PI / 180; // 1 grado en radianes
+        const direction = new THREE.Vector3();
+        this.camera.getWorldDirection(direction);
 
-        // La geometría es una caja con muy poca altura
-        var geometryGround = new THREE.BoxGeometry (50,0.2,50);
+        console.log("He pulsado " + event.key.toString());
 
-        // El material se hará con una textura de madera
-        var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
-        var materialGround = new THREE.MeshPhongMaterial ({map: texture});
+        // Movemos la cámara hacia adelante o atrás
+        if(event.key === "w") {
+            console.log(" VOY A MOVER LA CÁMARA :D");
+            this.camera.translateOnAxis(direction, -velocidadMovimiento);
+        } else if(event.key === "s") {
+            this.camera.translateOnAxis(direction, +velocidadMovimiento);
+        }
 
-        // Ya se puede construir el Mesh
-        var ground = new THREE.Mesh (geometryGround, materialGround);
-
-        // Todas las figuras se crean centradas en el origen.
-        // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-        ground.position.y = -0.1;
-
-        // Que no se nos olvide añadirlo a la escena, que en este caso es  this
-        this.add (ground);
+        // Rotamos la cámara hacia la izquierda o la derecha
+        if (event.key === "a") {
+            this.camera.rotation.y += velocidadRotacion;
+        } else if (event.key === "d") {
+            this.camera.rotation.y -= velocidadRotacion;
+        }
     }
 
     createGUI() {
@@ -231,12 +243,9 @@ class MyScene extends THREE.Scene {
     update () {
         if (this.stats) this.stats.update();
 
-        // Se actualizan los elementos de la escena para cada frame
+        // Se actualizan los elementos de la escena para cada frame.
 
-        // Se actualiza la posición de la cámara según su controlador
-        this.cameraControl.update();
-
-        // Se actualiza el resto del modelo
+        // Se actualiza el resto del modelo.
         this.model.update();
         this.corazon.update();
 
@@ -247,7 +256,6 @@ class MyScene extends THREE.Scene {
         // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
         requestAnimationFrame(() => this.update());
-
     }
 }
 
@@ -258,6 +266,10 @@ $(function () {
 
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener ("resize", () => scene.onWindowResize());
+
+    window.addEventListener('keydown', (evento) => {
+        scene.actualizarTeclas(evento);
+    });
 
     // Que no se nos olvide, la primera visualización.
     scene.update();
