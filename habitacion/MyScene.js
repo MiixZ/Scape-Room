@@ -1,4 +1,3 @@
-
 // Clases de la biblioteca
 
 import * as THREE from '../libs/three.module.js'
@@ -24,6 +23,7 @@ class MyScene extends THREE.Scene {
     WidthH = 750;
     HeightH = 150;
     DepthH = 750;
+
     constructor (myCanvas) {
         super();
 
@@ -89,40 +89,17 @@ class MyScene extends THREE.Scene {
     }
 
     createCamera () {
-        // Para crear una cámara le indicamos
-        //   El ángulo del campo de visión en grados sexagesimales
-        //   La razón de aspecto ancho/alto
-        //   Los planos de recorte cercano y lejano
-        /*this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        // También se indica dónde se coloca
-        this.camera.position.set (20, this.HeightH*1.3, 20);
-        // Y hacia dónde mira
-        var look = new THREE.Vector3 (0,0,0);
-        this.camera.lookAt(look);
-        this.add (this.camera);
-
-        // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
-        this.cameraControl = new TrackballControls (this.camera, this.renderer.domElement);
-        // Se configuran las velocidades de los movimientos
-        this.cameraControl.rotateSpeed = 5;
-        this.cameraControl.zoomSpeed = -2;
-        this.cameraControl.panSpeed = 0.5;
-
-        // Debe orbitar con respecto al punto de mira de la cámara
-        this.cameraControl.target = look;*/
-
         this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        this.camera.position.set (0.1, this.HeightH, 0.1);
-        var look = new THREE.Vector3 (this.WidthH/2,0,0);
+        this.camera.position.set (0.1, 2*this.HeightH/3, 0.1);
+        var look = new THREE.Vector3 (this.WidthH/2,2*this.HeightH/3,0);
         this.camera.lookAt(look);
 
         this.add( this.camera );
     }
 
     actualizarTeclas(event) {
-        const x = event.which || event.key;
         const velocidadMovimiento = 0.1;
-        const velocidadRotacion = Math.PI / 180; // 1 grado en radianes
+        const velocidadRotacion = Math.PI / 90; // 1 grado en radianes
         const direction = new THREE.Vector3();
         this.camera.getWorldDirection(direction);
 
@@ -130,17 +107,17 @@ class MyScene extends THREE.Scene {
 
         // Movemos la cámara hacia adelante o atrás
         if(event.key === "w") {
-            console.log(" VOY A MOVER LA CÁMARA :D");
-            this.camera.translateOnAxis(direction, -velocidadMovimiento);
+            console.log("trato de moverme");
+            this.camera.translateOnAxis(direction, velocidadMovimiento);
         } else if(event.key === "s") {
-            this.camera.translateOnAxis(direction, +velocidadMovimiento);
+            this.camera.translateOnAxis(direction, -velocidadMovimiento);
         }
 
         // Rotamos la cámara hacia la izquierda o la derecha
         if (event.key === "a") {
-            this.camera.rotation.y += velocidadRotacion;
+            this.camera.rotateY(velocidadRotacion);
         } else if (event.key === "d") {
-            this.camera.rotation.y -= velocidadRotacion;
+            this.camera.rotateY(-velocidadRotacion);
         }
     }
 
