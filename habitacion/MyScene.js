@@ -95,7 +95,6 @@ class MyScene extends THREE.Scene {
 
         this.CameraControl.movementSpeed = 4;
         this.CameraControl.lookVertical = false;
-        this.CameraControl.
 
         this.add(this.camera);
     }
