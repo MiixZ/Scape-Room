@@ -3,7 +3,7 @@ import * as CSG from '../libs/CSG-v2.js'
 
 class jarron extends THREE.Object3D {
     jarron;
-    constructor(gui, titleGui) {
+    constructor() {
         super();
 
         // Se crea la parte de la interfaz que corresponde a la caja

@@ -5,7 +5,7 @@ class habitacion extends THREE.Object3D {
     WidthH = 750;
     HeightH = 250;
     DepthH = 1500;
-    constructor(gui, titleGui) {
+    constructor() {
         super();
 
         // Se crea la parte de la interfaz que corresponde a la caja
