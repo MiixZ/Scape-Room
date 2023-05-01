@@ -4,7 +4,7 @@ import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
-import * as KeyCode from '../libs/keycode.esm.js';
+import { FirstPersonControls } from '../libs/FirstPersonControls.js';
 
 // Clases de mi proyecto
 
@@ -56,9 +56,9 @@ class MyScene extends THREE.Scene {
         // Por último creamos el modelo.
         // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a
         // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-        this.model = new habitacion(this.gui, "Controles de la Caja");
+        this.model = new habitacion();
         this.model.scale.y = 1.5;
-        this.mesa = new mesa(this.gui, "mesa");
+        this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 -50;
         this.mesa.scale.z = 1.3;
         this.mesa.scale.y = 1.2;
@@ -89,36 +89,15 @@ class MyScene extends THREE.Scene {
     }
 
     createCamera () {
-        this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        this.camera.position.set (0.1, 2*this.HeightH/3, 0.1);
-        var look = new THREE.Vector3 (this.WidthH/2,2*this.HeightH/3,0);
-        this.camera.lookAt(look);
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+        this.camera.position.set (0, 2*this.HeightH/3, 0);
+        this.CameraControl = new FirstPersonControls(this.camera, this.renderer.domElement);
 
-        this.add( this.camera );
-    }
+        this.CameraControl.movementSpeed = 4;
+        this.CameraControl.lookVertical = false;
+        this.CameraControl.
 
-    actualizarTeclas(event) {
-        const velocidadMovimiento = 0.1;
-        const velocidadRotacion = Math.PI / 90; // 1 grado en radianes
-        const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-
-        console.log("He pulsado " + event.key.toString());
-
-        // Movemos la cámara hacia adelante o atrás
-        if(event.key === "w") {
-            console.log("trato de moverme");
-            this.camera.translateOnAxis(direction, velocidadMovimiento);
-        } else if(event.key === "s") {
-            this.camera.translateOnAxis(direction, -velocidadMovimiento);
-        }
-
-        // Rotamos la cámara hacia la izquierda o la derecha
-        if (event.key === "a") {
-            this.camera.rotateY(velocidadRotacion);
-        } else if (event.key === "d") {
-            this.camera.rotateY(-velocidadRotacion);
-        }
+        this.add(this.camera);
     }
 
     createGUI() {
@@ -218,9 +197,10 @@ class MyScene extends THREE.Scene {
     }
 
     update () {
-        if (this.stats) this.stats.update();
+        if(this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
+        this.CameraControl.update(1);
 
         // Se actualiza el resto del modelo.
         this.model.update();
@@ -243,10 +223,6 @@ $(function () {
 
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener ("resize", () => scene.onWindowResize());
-
-    window.addEventListener('keydown', (evento) => {
-        scene.actualizarTeclas(evento);
-    });
 
     // Que no se nos olvide, la primera visualización.
     scene.update();
