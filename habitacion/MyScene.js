@@ -2,16 +2,15 @@
 
 import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
 import { Stats } from '../libs/stats.module.js'
 import { FirstPersonControls } from '../libs/FirstPersonControls.js';
 
 // Clases de mi proyecto
 
-import { jarron } from '../jarron/jarron.js'
 import { mesa } from '../mesa/mesa.js'
 import { habitacion } from './habitacion.js'
 import { Corazon } from '../corazon/Corazon.js'
+import { lampara } from './lampara.js'
 
 
 /// La clase fachada del modelo
@@ -22,7 +21,7 @@ import { Corazon } from '../corazon/Corazon.js'
 class MyScene extends THREE.Scene {
     WidthH = 750;
     HeightH = 150;
-    DepthH = 750;
+    DepthH = 1500;
 
     constructor (myCanvas) {
         super();
@@ -40,7 +39,7 @@ class MyScene extends THREE.Scene {
         // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta.
         //  Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
         // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
-        this.createLights ();
+
 
         // Tendremos una cámara con un control de movimiento con el ratón.
         this.createCamera ();
@@ -52,25 +51,32 @@ class MyScene extends THREE.Scene {
         this.axis = new THREE.AxesHelper (5);
         this.add (this.axis);
 
-
         // Por último creamos el modelo.
         // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a
         // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
         this.model = new habitacion();
-        this.model.scale.y = 1.5;
+        this.model.scale.y = 1.3;
+        this.add (this.model);
+
         this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 -50;
         this.mesa.scale.z = 1.3;
+        this.mesa.jarronMesa.scale.x += 1.3;
         this.mesa.scale.y = 1.2;
         this.add(this.mesa);
-        this.add (this.model);
 
         this.corazon = new Corazon();
         this.corazon.position.x = this.WidthH / 2 - 30;
         this.corazon.position.y = this.HeightH / 2;
         this.add(this.corazon);
 
+        this.lampara = new lampara();
+        this.lampara.position.z = this.DepthH / 2 - this.lampara.RadiusBase;
+        this.lampara.position.x = this.WidthH / 2 - this.lampara.RadiusBase;
+        this.add(this.lampara);
 
+
+        this.createLights();
     }
 
     initStats() {
@@ -90,7 +96,7 @@ class MyScene extends THREE.Scene {
 
     createCamera () {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.camera.position.set (0, 2*this.HeightH/3, 0);
+        this.camera.position.set (-300, 2*this.HeightH/3, -20);
         this.CameraControl = new FirstPersonControls(this.camera, this.renderer.domElement);
 
         this.CameraControl.movementSpeed = 4;
@@ -129,7 +135,7 @@ class MyScene extends THREE.Scene {
     }
 
     createLights () {
-        // Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz
+        // Se crea una luz ambiental, evita que se vean completamente negras las zonas donde no incide de manera directa una fuente de luz
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
@@ -141,9 +147,15 @@ class MyScene extends THREE.Scene {
         // La luz focal, además tiene una posición, y un punto de mira
         // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
         // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-        this.spotLight = new THREE.SpotLight( 0xffffff, this.guiControls.lightIntensity );
+        this.lampara1Light = new THREE.SpotLight(0x03FA15, 0.3);
+        this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y, this.DepthH / 2 - this.lampara.RadiusBase);
+        this.lampara1Light.target = this.lampara;
+        this.lampara1Light.penumbra = 1;
+
+        this.spotLight = new THREE.SpotLight(0xffffff, 0.2);
         this.spotLight.position.set( this.WidthH, this.HeightH, 0);
-        this.add(this.spotLight);
+
+        this.add(this.spotLight, this.lampara1Light);
     }
 
     setLightIntensity (valor) {
