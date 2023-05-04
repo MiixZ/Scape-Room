@@ -20,11 +20,13 @@ import { lampara } from './lampara.js'
 
 class MyScene extends THREE.Scene {
     WidthH = 750;
-    HeightH = 150;
+    HeightH = 250;
     DepthH = 1500;
+    cameraHeight = 150;
 
-    constructor (myCanvas) {
+    constructor(myCanvas) {
         super();
+        this.test = true;
 
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
@@ -42,41 +44,55 @@ class MyScene extends THREE.Scene {
 
 
         // Tendremos una cámara con un control de movimiento con el ratón.
-        this.createCamera ();
+        this.createCamera();
 
         // Un suelo
         // this.createGround ();
 
         // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-        this.axis = new THREE.AxesHelper (5);
-        this.add (this.axis);
+        this.axis = new THREE.AxesHelper(5);
+        this.add(this.axis);
 
         // Por último creamos el modelo.
         // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a
         // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
+        this.candidates = [];
         this.model = new habitacion();
         this.model.scale.y = 1.3;
-        this.add (this.model);
+        this.add(this.model);
+        let numParedes = 4;
+        for (let i = 1; i <= numParedes; i++) {
+            let name = "pared"+i.toString();
+            let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
+            this.candidates.push(cajaHabitacion);
+        }
 
+        console.log(this.model);
         this.mesa = new mesa();
-        this.mesa.position.x = this.WidthH / 2 -50;
+        this.mesa.position.x = this.WidthH / 2 - 50;
         this.mesa.scale.z = 1.3;
         this.mesa.jarronMesa.scale.x += 1.3;
         this.mesa.scale.y = 1.2;
         this.add(this.mesa);
+        let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
+        this.candidates.push(cajaMesa);
 
         this.corazon = new Corazon();
         this.corazon.position.x = this.WidthH / 2 - 30;
-        this.corazon.position.y = this.HeightH / 2;
+        this.corazon.position.y = this.HeightH / 3.5;
         this.add(this.corazon);
 
         this.lampara = new lampara();
         this.lampara.position.z = this.DepthH / 2 - this.lampara.RadiusBase;
         this.lampara.position.x = this.WidthH / 2 - this.lampara.RadiusBase;
         this.add(this.lampara);
+        let cajaLampara = new THREE.Box3().setFromObject(this.lampara);
 
+        this.candidates.push(cajaLampara);
 
         this.createLights();
+        this.createBody();
+        console.log(this.candidates);
     }
 
     initStats() {
@@ -89,20 +105,59 @@ class MyScene extends THREE.Scene {
         stats.domElement.style.left = '0px';
         stats.domElement.style.top = '0px';
 
-        $("#Stats-output").append( stats.domElement );
+        $("#Stats-output").append(stats.domElement);
 
         this.stats = stats;
     }
 
-    createCamera () {
+    createCamera() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.camera.position.set (-300, 2*this.HeightH/3, -20);
+        this.camera.position.set(-300, this.cameraHeight, -20);
         this.CameraControl = new FirstPersonControls(this.camera, this.renderer.domElement);
 
         this.CameraControl.movementSpeed = 4;
         this.CameraControl.lookVertical = false;
 
         this.add(this.camera);
+
+    }
+
+    createBody() {
+        let bodyH = this.cameraHeight + 20;
+        let boxGeometry = new THREE.BoxGeometry(30, bodyH, 60);
+        boxGeometry.translate(0, bodyH / 2, 0);
+        let boxMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            opacity: 0,
+            transparent: true
+        })
+        boxMaterial.transparent = true;
+        this.body = new THREE.Mesh(boxGeometry, boxMaterial);
+        this.body.position.set(-300, 0, -20);
+
+
+        this.add(this.body);
+    }
+
+    changeBodyPosition() {
+        let cameraPosition = new THREE.Vector3();
+        this.camera.getWorldPosition(cameraPosition);
+        this.body.position.set(cameraPosition.x, this.body.position.y, cameraPosition.z)// nunca cambiamos la posición y
+    }
+
+    checkColisiones() {
+        this.changeBodyPosition();
+        let cajaBody = new THREE.Box3().setFromObject(this.body);
+
+        for (let i = 0; i < this.candidates.length; i++) {
+            const candidate = this.candidates[i];
+            if (cajaBody.intersectsBox(candidate) && this.test) {
+                console.log("colisiona" + candidate + " indice i: " + i);
+                //this.test = false;
+            }
+        }
+        /* cajaBody.geometry.dispose();
+         cajaBody.material.dispose();*/
     }
 
     createGUI() {
@@ -114,27 +169,27 @@ class MyScene extends THREE.Scene {
         // En este caso la intensidad de la luz y si se muestran o no los ejes
         this.guiControls = {
             // En el contexto de una función   this   alude a la función
-            lightIntensity : 0.5,
-            axisOnOff : true
+            lightIntensity: 0.5,
+            axisOnOff: true
         }
 
         // Se crea una sección para los controles de esta clase
-        var folder = gui.addFolder ('Luz y Ejes');
+        var folder = gui.addFolder('Luz y Ejes');
 
         // Se le añade un control para la intensidad de la luz
-        folder.add (this.guiControls, 'lightIntensity', 0, 1, 0.1)
+        folder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1)
             .name('Intensidad de la Luz: ')
-            .onChange ( (value) => this.setLightIntensity (value) );
+            .onChange((value) => this.setLightIntensity(value));
 
         // Y otro para mostrar u ocultar los ejes
-        folder.add (this.guiControls, 'axisOnOff')
-            .name ('Mostrar ejes : ')
-            .onChange ( (value) => this.setAxisVisible (value) );
+        folder.add(this.guiControls, 'axisOnOff')
+            .name('Mostrar ejes : ')
+            .onChange((value) => this.setAxisVisible(value));
 
         return gui;
     }
 
-    createLights () {
+    createLights() {
         // Se crea una luz ambiental, evita que se vean completamente negras las zonas donde no incide de manera directa una fuente de luz
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
@@ -153,20 +208,20 @@ class MyScene extends THREE.Scene {
         this.lampara1Light.penumbra = 1;
 
         this.spotLight = new THREE.SpotLight(0xffffff, 0.2);
-        this.spotLight.position.set( this.WidthH, this.HeightH, 0);
+        this.spotLight.position.set(this.WidthH, this.HeightH, 0);
 
         this.add(this.spotLight, this.lampara1Light);
     }
 
-    setLightIntensity (valor) {
+    setLightIntensity(valor) {
         this.spotLight.intensity = valor;
     }
 
-    setAxisVisible (valor) {
+    setAxisVisible(valor) {
         this.axis.visible = valor;
     }
 
-    createRenderer (myCanvas) {
+    createRenderer(myCanvas) {
         // Se recibe el lienzo sobre el que se van a hacer los renderizados. Un div definido en el html.
 
         // Se instancia un Renderer   WebGL
@@ -184,13 +239,13 @@ class MyScene extends THREE.Scene {
         return renderer;
     }
 
-    getCamera () {
+    getCamera() {
         // En principio se devuelve la única cámara que tenemos
         // Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
         return this.camera;
     }
 
-    setCameraAspect (ratio) {
+    setCameraAspect(ratio) {
         // Cada vez que el usuario modifica el tamaño de la ventana desde el gestor de ventanas de
         // su sistema operativo hay que actualizar el ratio de aspecto de la cámara
         this.camera.aspect = ratio;
@@ -198,17 +253,17 @@ class MyScene extends THREE.Scene {
         this.camera.updateProjectionMatrix();
     }
 
-    onWindowResize () {
+    onWindowResize() {
         // Este método es llamado cada vez que el usuario modifica el tamapo de la ventana de la aplicación
         // Hay que actualizar el ratio de aspecto de la cámara
-        this.setCameraAspect (window.innerWidth / window.innerHeight);
+        this.setCameraAspect(window.innerWidth / window.innerHeight);
 
         // Y también el tamaño del renderizador
-        this.renderer.setSize (window.innerWidth, window.innerHeight);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    update () {
-        if(this.stats) this.stats.update();
+    update() {
+        if (this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
         this.CameraControl.update(1);
@@ -216,9 +271,9 @@ class MyScene extends THREE.Scene {
         // Se actualiza el resto del modelo.
         this.model.update();
         this.corazon.update();
-
+        this.checkColisiones();
         // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
-        this.renderer.render (this, this.getCamera());
+        this.renderer.render(this, this.getCamera());
 
         // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
         // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
@@ -233,7 +288,7 @@ $(function () {
     var scene = new MyScene("#WebGL-output");
 
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
-    window.addEventListener ("resize", () => scene.onWindowResize());
+    window.addEventListener("resize", () => scene.onWindowResize());
 
     // Que no se nos olvide, la primera visualización.
     scene.update();

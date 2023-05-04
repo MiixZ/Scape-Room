@@ -34,6 +34,11 @@ class habitacion extends THREE.Object3D {
         pared3 = new THREE.Mesh(geometryPared2, materialPared);
         pared4 = new THREE.Mesh(geometryPared2, materialPared);
 
+        pared1.name = "pared1";
+        pared2.name = "pared2";
+        pared3.name = "pared3";
+        pared4.name = "pared4";
+
         pared1.position.set(-this.WidthH / 2, this.HeightH / 2, 0);
         pared2.position.set(this.WidthH / 2, this.HeightH / 2, 0);
         pared3.position.set(0, this.HeightH / 2, this.DepthH / 2);
