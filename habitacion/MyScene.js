@@ -26,7 +26,6 @@ class MyScene extends THREE.Scene {
 
     constructor(myCanvas) {
         super();
-        this.test = true;
 
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
@@ -62,7 +61,7 @@ class MyScene extends THREE.Scene {
         this.add(this.model);
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
-            let name = "pared"+i.toString();
+            let name = "pared" + i.toString();
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
             this.candidates.push(cajaHabitacion);
         }
@@ -146,18 +145,23 @@ class MyScene extends THREE.Scene {
     }
 
     checkColisiones() {
-        this.changeBodyPosition();
         let cajaBody = new THREE.Box3().setFromObject(this.body);
+        this.changeBodyPosition();
 
         for (let i = 0; i < this.candidates.length; i++) {
             const candidate = this.candidates[i];
-            if (cajaBody.intersectsBox(candidate) && this.test) {
-                console.log("colisiona" + candidate + " indice i: " + i);
-                //this.test = false;
+            if (cajaBody.intersectsBox(candidate)) {
+                this.handleDefaultCollision();
+                break;
             }
         }
-        /* cajaBody.geometry.dispose();
-         cajaBody.material.dispose();*/
+    }
+
+    handleDefaultCollision() {
+        let direction = new THREE.Vector3(); // Vector de dirección del objeto
+        this.getWorldDirection(direction)
+        direction = direction.normalize();
+        this.camera.translateOnAxis(direction, 6);
     }
 
     createGUI() {
@@ -266,12 +270,16 @@ class MyScene extends THREE.Scene {
         if (this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
-        this.CameraControl.update(1);
-
-        // Se actualiza el resto del modelo.
         this.model.update();
         this.corazon.update();
         this.checkColisiones();
+
+        this.CameraControl.update(1);
+        this.colision = false;
+
+
+        // Se actualiza el resto del modelo.
+
         // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
         this.renderer.render(this, this.getCamera());
 
