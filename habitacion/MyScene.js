@@ -4,6 +4,8 @@ import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { Stats } from '../libs/stats.module.js'
 import { FirstPersonControls } from '../libs/FirstPersonControls.js';
+import { PointerLockControls } from '../libs/PointerLockControls.js';
+
 
 // Clases de mi proyecto
 
@@ -112,13 +114,12 @@ class MyScene extends THREE.Scene {
     createCamera() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
         this.camera.position.set(-300, this.cameraHeight, -20);
-        this.CameraControl = new FirstPersonControls(this.camera, this.renderer.domElement);
+        this.CameraControl = new PointerLockControls(this.camera, this.renderer.domElement);
 
-        this.CameraControl.movementSpeed = 4;
-        this.CameraControl.lookVertical = false;
+        this.xdir = 0; this.zdir = 0;
+        this.tiempoI = Date.now(); this.velocidad = 500;
 
         this.add(this.camera);
-
     }
 
     createBody() {
@@ -266,17 +267,70 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    mover(evento) {
+        switch (evento.key) {
+            case 'w':
+                this.zdir = 1;
+                break;
+
+            case 's':
+                this.zdir = -1;
+                break;
+
+            case 'a':
+                this.xdir = -1;
+                break;
+
+            case 'd':
+                this.xdir = 1;
+                break;
+            case 'Enter':
+                this.CameraControl.lock();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    parar(evento) {
+        switch (evento.key) {
+            case 'w':
+                this.zdir = 0;
+                break;
+
+            case 's':
+                this.zdir = 0;
+                break;
+
+            case 'a':
+                this.xdir = 0;
+                break;
+
+            case 'd':
+                this.xdir = 0;
+                break;
+            default:
+                break;
+        }
+    }
+
     update() {
         if (this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
+
+        this.tiempoF = Date.now();
+        this.deltaT = (this.tiempoF - this.tiempoI)/1000;
+        this.CameraControl.moveForward(this.zdir * this.velocidad  * this.deltaT);
+        this.CameraControl.moveRight(this.xdir * this.velocidad  * this.deltaT);
+        this.tiempoI = this.tiempoF;
+
         this.model.update();
         this.corazon.update();
         this.checkColisiones();
 
-        this.CameraControl.update(1);
         this.colision = false;
-
 
         // Se actualiza el resto del modelo.
 
@@ -290,13 +344,15 @@ class MyScene extends THREE.Scene {
     }
 }
 
-/// La función main
+/// La función main.
 $(function () {
     // Se instancia la escena pasándole el  div  que se ha creado en el html para visualizar
     var scene = new MyScene("#WebGL-output");
 
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener("resize", () => scene.onWindowResize());
+    window.addEventListener('keydown', (event) => scene.mover(event));
+    window.addEventListener('keyup', (event) => scene.parar(event));
 
     // Que no se nos olvide, la primera visualización.
     scene.update();
