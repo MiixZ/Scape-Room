@@ -5,6 +5,9 @@ class habitacion extends THREE.Object3D {
     WidthH = 750;
     HeightH = 325;
     DepthH = 1500;
+    puertaHeight = 200;
+    puertaWidth = 100;
+
     constructor() {
         super();
 
@@ -17,22 +20,29 @@ class habitacion extends THREE.Object3D {
 
         this.createParedes();
 
-        // Y añadirlo como hijo del Object3D (el this)
-
     }
 
     createParedes() {
-        var pared1, pared2, pared3, pared4;
+        var pared1, pared2, pared3, pared4, puerta;
+        var csg = new CSG.CSG();
 
         var geometryPared = new THREE.BoxGeometry (0.2, this.HeightH, this.DepthH);
         var geometryPared2 = new THREE.BoxGeometry (this.WidthH, this.HeightH, 0.2);
-        var texture = new THREE.TextureLoader().load('../imgs/roble_oscuro.jpg');
+        var texture = new THREE.TextureLoader().load('../imgs/pared.jpg');
         var materialPared = new THREE.MeshPhongMaterial ({map: texture});
 
         pared1 = new THREE.Mesh(geometryPared, materialPared);
         pared2 = new THREE.Mesh(geometryPared, materialPared);
         pared3 = new THREE.Mesh(geometryPared2, materialPared);
         pared4 = new THREE.Mesh(geometryPared2, materialPared);
+        this.puerta = this.createPuerta();
+        this.createPomo();
+
+        this.puerta.position.set(0, -this.HeightH / 2 + this.puertaHeight / 2, 0);  // Que esté tocando el suelo.
+
+        pared4 = csg.subtract([pared4, this.puerta]).toMesh();
+
+        pared4.add(this.puerta);
 
         pared1.name = "pared1";
         pared2.name = "pared2";
@@ -54,8 +64,8 @@ class habitacion extends THREE.Object3D {
         var geometryGround = new THREE.BoxGeometry(this.WidthH,0.2, this.DepthH);
 
         // El material se hará con una textura de madera
-        var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
-        var textureTecho = new THREE.TextureLoader().load('../imgs/techo.jpg');
+        var texture = new THREE.TextureLoader().load('../imgs/suelo.jpg');
+        var textureTecho = new THREE.TextureLoader().load('../imgs/techoTextura.jpg');
         var materialGround = new THREE.MeshPhongMaterial ({map: texture});
         var materialTecho= new THREE.MeshPhongMaterial ({map: textureTecho});
 
@@ -70,6 +80,29 @@ class habitacion extends THREE.Object3D {
 
         // Que no se nos olvide añadirlo a la escena, que en este caso es  this
         this.add(ground, techo);
+    }
+
+    createPuerta() {
+        var geometryPuerta = new THREE.BoxGeometry(this.puertaWidth, this.puertaHeight, 0.2);
+        var texture = new THREE.TextureLoader().load('../imgs/puerta.jpg');
+        var materialPuerta = new THREE.MeshPhongMaterial({map: texture});
+
+        return new THREE.Mesh(geometryPuerta, materialPuerta);
+    }
+
+    createPomo() {
+        var geometryApoyo = new THREE.CylinderGeometry(2.5, 2.5, 5, 100, 100);
+        var geometryPomo = new THREE.SphereGeometry(3.75, 100, 100);
+        var material = new THREE.MeshPhongMaterial({color: 0xfffaaa});
+
+        geometryApoyo.translate(-2*this.puertaWidth / 5, 2.5, 0);
+        geometryApoyo.rotateX(Math.PI / 2);
+        geometryPomo.translate(-2*this.puertaWidth / 5, 0, 5 + 1.25);
+
+        var ApoyoMesh = new THREE.Mesh(geometryApoyo, material);
+        var PomoMesh = new THREE.Mesh(geometryPomo, material);
+
+        this.puerta.add(ApoyoMesh, PomoMesh);
     }
 
     update() {

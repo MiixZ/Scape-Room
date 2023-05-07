@@ -208,7 +208,7 @@ class MyScene extends THREE.Scene {
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
+        var ambientLight = new THREE.AmbientLight(0xccddee, 0.15);
         // La añadimos a la escena
         this.add(ambientLight);
 
@@ -216,12 +216,12 @@ class MyScene extends THREE.Scene {
         // La luz focal, además tiene una posición, y un punto de mira
         // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
         // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-        this.lampara1Light = new THREE.SpotLight(0x03FA15, 0.3);
+        this.lampara1Light = new THREE.SpotLight(0x03FA15, 0.6);
         this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y, this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
 
-        this.spotLight = new THREE.SpotLight(0xffffff, 0.2);
+        this.spotLight = new THREE.SpotLight(0xffffff, 0.1);
         this.spotLight.position.set(this.WidthH, this.HeightH, 0);
 
         this.add(this.spotLight, this.lampara1Light);
@@ -293,6 +293,7 @@ class MyScene extends THREE.Scene {
             case 'd':
                 this.xdir = 1;
                 break;
+
             case 'Enter':
                 this.CameraControl.lock();
                 break;
@@ -305,20 +306,15 @@ class MyScene extends THREE.Scene {
     parar(evento) {
         switch (evento.key) {
             case 'w':
-                this.zdir = 0;
-                break;
-
             case 's':
                 this.zdir = 0;
                 break;
 
             case 'a':
-                this.xdir = 0;
-                break;
-
             case 'd':
                 this.xdir = 0;
                 break;
+
             default:
                 break;
         }

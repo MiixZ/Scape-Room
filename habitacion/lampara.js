@@ -3,7 +3,7 @@ import * as CSG from '../libs/CSG-v2.js'
 
 class lampara extends THREE.Object3D {
     Radius = 3;
-    HeightH = 150;
+    HeightH = 200;
     RadiusBase = 30;
     HeightBase = 1;
     CabezaHeight = 50;
@@ -43,7 +43,7 @@ class lampara extends THREE.Object3D {
 
         this.cabeza = new THREE.Mesh(cabezaGeometry, cabezaMaterial);
 
-        this.cabeza.position.y = this.CabezaHeight / 2 + this.HeightBase / 2 + 2 * this.HeightH / 3;
+        this.cabeza.position.y = this.CabezaHeight / 2 + this.HeightBase / 2 + 3 * this.HeightH / 4;
 
         this.add(this.cabeza);
     }
