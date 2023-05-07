@@ -22,12 +22,14 @@ import { lampara } from './lampara.js'
 
 class MyScene extends THREE.Scene {
     WidthH = 750;
-    HeightH = 250;
+    HeightH = 350;
     DepthH = 1500;
     cameraHeight = 150;
-
+    maxCont = 1;
     constructor(myCanvas) {
         super();
+        this.previousPosition = new THREE.Vector3();
+        this.cont = this.maxCont;
 
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
@@ -59,7 +61,7 @@ class MyScene extends THREE.Scene {
         // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
         this.candidates = [];
         this.model = new habitacion();
-        this.model.scale.y = 1.3;
+        // this.model.scale.y = 1.3;
         this.add(this.model);
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
@@ -67,6 +69,8 @@ class MyScene extends THREE.Scene {
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
             this.candidates.push(cajaHabitacion);
         }
+
+        this.cajaHabitacion = new THREE.Box3().setFromObject(this.model);
 
         console.log(this.model);
         this.mesa = new mesa();
@@ -147,11 +151,11 @@ class MyScene extends THREE.Scene {
 
     checkColisiones() {
         let cajaBody = new THREE.Box3().setFromObject(this.body);
-        this.changeBodyPosition();
-
+        this.collision = false;
         for (let i = 0; i < this.candidates.length; i++) {
-            const candidate = this.candidates[i];
+            let candidate = this.candidates[i];
             if (cajaBody.intersectsBox(candidate)) {
+                console.log("colisiona");
                 this.handleDefaultCollision();
                 break;
             }
@@ -160,9 +164,14 @@ class MyScene extends THREE.Scene {
 
     handleDefaultCollision() {
         let direction = new THREE.Vector3(); // Vector de dirección del objeto
-        this.getWorldDirection(direction)
-        direction = direction.normalize();
-        this.camera.translateOnAxis(direction, 6);
+        let position = new THREE.Vector3();
+        this.camera.getWorldPosition(position);
+
+        direction.subVectors(position, this.previousPosition); //obtenemos la dirección restandole a la posición actual, la posición anterior
+        let inverseDirection = direction.clone().multiplyScalar(-6);
+
+        this.camera.position.set(position.x + inverseDirection.x, position.y, position.z + inverseDirection.z);
+
     }
 
     createGUI() {
@@ -319,18 +328,22 @@ class MyScene extends THREE.Scene {
         if (this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
-
+        //if(this.cont == this.maxCont){
+            this.body.getWorldPosition(this.previousPosition);
+            this.cont = 0;
+        //}
+        this.cont++;
         this.tiempoF = Date.now();
-        this.deltaT = (this.tiempoF - this.tiempoI)/1000;
-        this.CameraControl.moveForward(this.zdir * this.velocidad  * this.deltaT);
-        this.CameraControl.moveRight(this.xdir * this.velocidad  * this.deltaT);
+        this.deltaT = (this.tiempoF - this.tiempoI) / 1000;
+        this.CameraControl.moveForward(this.zdir * this.velocidad * this.deltaT);
+        this.CameraControl.moveRight(this.xdir * this.velocidad * this.deltaT);
         this.tiempoI = this.tiempoF;
 
         this.model.update();
         this.corazon.update();
+        
+        this.changeBodyPosition();
         this.checkColisiones();
-
-        this.colision = false;
 
         // Se actualiza el resto del modelo.
 

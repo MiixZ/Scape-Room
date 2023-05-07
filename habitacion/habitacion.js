@@ -3,7 +3,7 @@ import * as CSG from '../libs/CSG-v2.js'
 
 class habitacion extends THREE.Object3D {
     WidthH = 750;
-    HeightH = 250;
+    HeightH = 325;
     DepthH = 1500;
     constructor() {
         super();
