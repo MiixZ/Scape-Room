@@ -13,6 +13,7 @@ import { mesa } from '../mesa/mesa.js'
 import { habitacion } from './habitacion.js'
 import { Corazon } from '../corazon/Corazon.js'
 import { lampara } from './lampara.js'
+import { foco } from './foco.js'
 
 
 /// La clase fachada del modelo
@@ -94,6 +95,11 @@ class MyScene extends THREE.Scene {
         let cajaLampara = new THREE.Box3().setFromObject(this.lampara);
 
         this.candidates.push(cajaLampara);
+
+        this.foco = new foco();
+        this.foco.position.y = this.HeightH - 50;
+        this.foco.position.x = this.WidthH / 2 - 30;
+        this.add(this.foco);
 
         this.createLights();
         this.createBody();
@@ -216,7 +222,7 @@ class MyScene extends THREE.Scene {
         // La luz focal, además tiene una posición, y un punto de mira
         // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
         // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-        this.lampara1Light = new THREE.SpotLight(0x03FA15, 0.6);
+        this.lampara1Light = new THREE.SpotLight(0x03FA15, 1);
         this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y, this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
@@ -224,7 +230,12 @@ class MyScene extends THREE.Scene {
         this.spotLight = new THREE.SpotLight(0xffffff, 0.1);
         this.spotLight.position.set(this.WidthH, this.HeightH, 0);
 
-        this.add(this.spotLight, this.lampara1Light);
+        this.LightMesa = new THREE.SpotLight(0x0944EE, 0.3);
+        this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
+        this.LightMesa.target = this.mesa;
+        this.LightMesa.penumbra = 0.5;
+
+        this.add(this.spotLight, this.lampara1Light, this.LightMesa);
     }
 
     setLightIntensity(valor) {

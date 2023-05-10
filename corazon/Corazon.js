@@ -12,8 +12,6 @@ class Corazon extends THREE.Object3D {
       depth: 1,
       bevelEnabled: true
     }
-    
-
 
     this.material = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
 
@@ -49,7 +47,7 @@ class Corazon extends THREE.Object3D {
 
 
   update() {
-    this.rotation.y += 0.01;
+    this.rotation.y += 0.025;
   }
 }
 
