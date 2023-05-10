@@ -87,7 +87,9 @@ class habitacion extends THREE.Object3D {
         var texture = new THREE.TextureLoader().load('../imgs/puerta.jpg');
         var materialPuerta = new THREE.MeshPhongMaterial({map: texture});
 
-        return new THREE.Mesh(geometryPuerta, materialPuerta);
+        let puerta = new THREE.Mesh(geometryPuerta, materialPuerta);
+        puerta.name = "puerta";
+        return puerta;  
     }
 
     createPomo() {
@@ -101,7 +103,7 @@ class habitacion extends THREE.Object3D {
 
         var ApoyoMesh = new THREE.Mesh(geometryApoyo, material);
         var PomoMesh = new THREE.Mesh(geometryPomo, material);
-
+        PomoMesh.name = "pomo";
         this.puerta.add(ApoyoMesh, PomoMesh);
     }
 

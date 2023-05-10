@@ -29,6 +29,7 @@ class MyScene extends THREE.Scene {
     maxCont = 1;
     constructor(myCanvas) {
         super();
+        this.pickeableObjects = [];
         this.previousPosition = new THREE.Vector3();
         this.cont = this.maxCont;
 
@@ -73,7 +74,9 @@ class MyScene extends THREE.Scene {
 
         this.cajaHabitacion = new THREE.Box3().setFromObject(this.model);
 
-        console.log(this.model);
+        this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
+        this.pickeableObjects.push(this.model.getObjectByName("pared4"));
+
         this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 - 50;
         this.mesa.scale.z = 1.3;
@@ -91,10 +94,13 @@ class MyScene extends THREE.Scene {
         this.lampara = new lampara();
         this.lampara.position.z = this.DepthH / 2 - this.lampara.RadiusBase;
         this.lampara.position.x = this.WidthH / 2 - this.lampara.RadiusBase;
+        this.lampara.name = "lampara";
         this.add(this.lampara);
+        this.lamparaControl = true;
         let cajaLampara = new THREE.Box3().setFromObject(this.lampara);
 
         this.candidates.push(cajaLampara);
+        this.pickeableObjects.push(this.lampara);
 
         this.foco = new foco();
         this.foco.position.y = this.HeightH - 50;
@@ -103,7 +109,6 @@ class MyScene extends THREE.Scene {
 
         this.createLights();
         this.createBody();
-        console.log(this.candidates);
     }
 
     initStats() {
@@ -161,7 +166,6 @@ class MyScene extends THREE.Scene {
         for (let i = 0; i < this.candidates.length; i++) {
             let candidate = this.candidates[i];
             if (cajaBody.intersectsBox(candidate)) {
-                console.log("colisiona");
                 this.handleDefaultCollision();
                 break;
             }
@@ -222,11 +226,11 @@ class MyScene extends THREE.Scene {
         // La luz focal, además tiene una posición, y un punto de mira
         // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
         // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
+
         this.lampara1Light = new THREE.SpotLight(0x03FA15, 1);
         this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y, this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
-
         this.spotLight = new THREE.SpotLight(0xffffff, 0.1);
         this.spotLight.position.set(this.WidthH, this.HeightH, 0);
 
@@ -331,13 +335,62 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    pick(event) {
+        let ray = new THREE.Raycaster();
+        let center = new THREE.Vector2();
+        // Calcula las coordenadas del centro
+        center.x = window.innerWidth / 2;
+        center.y = window.innerHeight / 2;
+
+        // Normaliza las coordenadas al rango [-1, 1]
+        center.x = (center.x / window.innerWidth) * 2 - 1;
+        center.y = 1 - (center.y / window.innerHeight) * 2;
+
+        ray.setFromCamera(center, this.camera);
+
+        let pickedObjects = ray.intersectObjects(this.pickeableObjects, true);
+
+        if (pickedObjects.length > 0) {
+            let selectedObject = pickedObjects[0].object;
+            //let selectedPoint = pickedObjects[0].point;
+            if(selectedObject.name == "pomo") {
+                this.showAlert("Parece que la puerta está cerada...");
+            } else if(selectedObject.parent.name == "lampara") {
+                this.lamparaControl = !this.lamparaControl;
+                this.controlLamp();
+            }
+        }
+    }
+
+    async showAlert(message){
+        let alert = document.getElementById("alert");
+        alert.style.display = "flex";
+        alert.textContent = "Parece que la puerta está cerada...";
+
+        setTimeout(() => {
+            alert.style.display = "none";
+            alert.textContent = "";
+        }, 2000);
+
+
+    }
+
+    controlLamp(){
+        if(this.lamparaControl){
+            this.add(this.lampara1Light);
+        } else {
+            this.remove(this.lampara1Light);
+        }
+        
+    }
+
     update() {
         if (this.stats) this.stats.update();
 
         // Se actualizan los elementos de la escena para cada frame.
         //if(this.cont == this.maxCont){
-            this.body.getWorldPosition(this.previousPosition);
-            this.cont = 0;
+        this.body.getWorldPosition(this.previousPosition);
+        this.cont = 0;
         //}
         this.cont++;
         this.tiempoF = Date.now();
@@ -348,7 +401,7 @@ class MyScene extends THREE.Scene {
 
         this.model.update();
         this.corazon.update();
-        
+
         this.changeBodyPosition();
         this.checkColisiones();
 
@@ -362,6 +415,7 @@ class MyScene extends THREE.Scene {
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
         requestAnimationFrame(() => this.update());
     }
+
 }
 
 /// La función main.
@@ -373,6 +427,7 @@ $(function () {
     window.addEventListener("resize", () => scene.onWindowResize());
     window.addEventListener('keydown', (event) => scene.mover(event));
     window.addEventListener('keyup', (event) => scene.parar(event));
+    window.addEventListener('click', (event) => scene.pick(event));
 
     // Que no se nos olvide, la primera visualización.
     scene.update();
