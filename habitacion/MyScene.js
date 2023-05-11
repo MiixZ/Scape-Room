@@ -365,7 +365,7 @@ class MyScene extends THREE.Scene {
     async showAlert(message){
         let alert = document.getElementById("alert");
         alert.style.display = "flex";
-        alert.textContent = "Parece que la puerta está cerada...";
+        alert.textContent = message;
 
         setTimeout(() => {
             alert.style.display = "none";
