@@ -21,7 +21,8 @@ class cama extends THREE.Object3D {
             });
 
         this.scale.set(100, 100, 100);
-        this.position.y = 20;
+        this.position.y = 5;
+        this.position.x = -300;
     }
 
     update() {

@@ -69,7 +69,7 @@ class MyScene extends THREE.Scene {
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
-            if(i == 3){
+            if(i === 3){
                 this.pared3 = this.model.getObjectByName(name);
             }
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
@@ -111,11 +111,11 @@ class MyScene extends THREE.Scene {
         this.foco.position.x = this.WidthH / 2 - 30;
         this.add(this.foco);
 
-        this.createLights();
-        this.createBody();
-
         this.cama = new cama();
         this.add(this.cama);
+
+        this.createLights();
+        this.createBody();
     }
 
     initStats() {
@@ -135,7 +135,7 @@ class MyScene extends THREE.Scene {
 
     createCamera() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.camera.position.set(-300, this.cameraHeight, -20);
+        this.camera.position.set(0, this.cameraHeight, -20);
         this.CameraControl = new PointerLockControls(this.camera, this.renderer.domElement);
 
         this.xdir = 0; this.zdir = 0;
@@ -225,7 +225,7 @@ class MyScene extends THREE.Scene {
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.15);
+        var ambientLight = new THREE.AmbientLight(0xccddee, 1);
         // La añadimos a la escena
         this.add(ambientLight);
 
