@@ -1,6 +1,7 @@
 import * as THREE from '../libs/three.module.js'
 import { MTLLoader } from '../libs/MTLLoader.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
+import {MeshPhongMaterial} from "../libs/three.module.js";
 
 class cama extends THREE.Object3D {
 
@@ -22,7 +23,7 @@ class cama extends THREE.Object3D {
 
         this.scale.set(100, 100, 100);
         this.position.y = 5;
-        this.position.x = -300;
+        this.position.x = -277;
     }
 
     update() {

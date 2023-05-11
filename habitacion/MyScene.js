@@ -15,6 +15,7 @@ import { Corazon } from '../corazon/Corazon.js'
 import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
+import {MeshPhongMaterial} from "../libs/three.module.js";
 
 
 /// La clase fachada del modelo
@@ -113,6 +114,8 @@ class MyScene extends THREE.Scene {
 
         this.cama = new cama();
         this.add(this.cama);
+
+        this.createTablon();
 
         this.createLights();
         this.createBody();
@@ -225,7 +228,7 @@ class MyScene extends THREE.Scene {
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.15);
+        var ambientLight = new THREE.AmbientLight(0xccddee, 0.3);
         // La añadimos a la escena
         this.add(ambientLight);
 
@@ -247,6 +250,18 @@ class MyScene extends THREE.Scene {
         this.LightMesa.penumbra = 0.5;
 
         this.add(this.spotLight, this.LightMesa);
+    }
+
+    createTablon() {
+        var tablonGeometry = new THREE.BoxGeometry(200, 150, 5, 100, 100);
+        var texture = new THREE.TextureLoader().load('../imgs/cabecera.jpg');
+        var tablonMaterial = new MeshPhongMaterial({map: texture});
+
+        this.tablon = new THREE.Mesh(tablonGeometry, tablonMaterial);
+        this.tablon.position.z = -147;
+        this.tablon.position.y = 75;
+        this.tablon.position.x = -273;
+        this.add(this.tablon);
     }
 
     setLightIntensity(valor) {

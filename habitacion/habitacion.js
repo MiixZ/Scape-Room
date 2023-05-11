@@ -19,7 +19,6 @@ class habitacion extends THREE.Object3D {
         this.createGroundAndTecho();
 
         this.createParedes();
-
     }
 
     createParedes() {
@@ -65,7 +64,13 @@ class habitacion extends THREE.Object3D {
 
         // El material se hará con una textura de madera
         var texture = new THREE.TextureLoader().load('../imgs/suelo.jpg');
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(9, 15);
         var textureTecho = new THREE.TextureLoader().load('../imgs/techoTextura.jpg');
+        textureTecho.wrapS = THREE.RepeatWrapping;
+        textureTecho.wrapT = THREE.RepeatWrapping;
+        textureTecho.repeat.set(1, 3);
         var materialGround = new THREE.MeshPhongMaterial ({map: texture});
         var materialTecho= new THREE.MeshPhongMaterial ({map: textureTecho});
 
