@@ -27,8 +27,10 @@ class habitacion extends THREE.Object3D {
 
         var geometryPared = new THREE.BoxGeometry (0.2, this.HeightH, this.DepthH);
         var geometryPared2 = new THREE.BoxGeometry (this.WidthH, this.HeightH, 0.2);
-        var texture = new THREE.TextureLoader().load('../imgs/pared.jpg');
-        var materialPared = new THREE.MeshPhongMaterial ({map: texture});
+        var textureAux = new THREE.TextureLoader().load('../imgs/base_relieve.jpg');
+        var textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
+
+        var materialPared = new THREE.MeshPhongMaterial ({map: textureAux, bumpMap: textureBump, bumpScale: 1});
 
         pared1 = new THREE.Mesh(geometryPared, materialPared);
         pared2 = new THREE.Mesh(geometryPared, materialPared);
