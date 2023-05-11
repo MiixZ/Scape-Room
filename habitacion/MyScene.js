@@ -353,9 +353,10 @@ class MyScene extends THREE.Scene {
         if (pickedObjects.length > 0) {
             let selectedObject = pickedObjects[0].object;
             //let selectedPoint = pickedObjects[0].point;
-            if(selectedObject.name == "pomo") {
+            let distance = pickedObjects[0].distance;
+            if(selectedObject.name == "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
-            } else if(selectedObject.parent.name == "lampara") {
+            } else if(selectedObject.parent.name == "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
             }
