@@ -14,6 +14,7 @@ import { habitacion } from './habitacion.js'
 import { Corazon } from '../corazon/Corazon.js'
 import { lampara } from './lampara.js'
 import { foco } from './foco.js'
+import { cama } from './cama.js';
 
 
 /// La clase fachada del modelo
@@ -68,6 +69,9 @@ class MyScene extends THREE.Scene {
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
+            if(i == 3){
+                this.pared3 = this.model.getObjectByName(name);
+            }
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
             this.candidates.push(cajaHabitacion);
         }
@@ -75,7 +79,7 @@ class MyScene extends THREE.Scene {
         this.cajaHabitacion = new THREE.Box3().setFromObject(this.model);
 
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
-        this.pickeableObjects.push(this.model.getObjectByName("pared4"));
+        this.pickeableObjects.push(this.model.getObjectByName("pared4")); 
 
         this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 - 50;
@@ -96,7 +100,7 @@ class MyScene extends THREE.Scene {
         this.lampara.position.x = this.WidthH / 2 - this.lampara.RadiusBase;
         this.lampara.name = "lampara";
         this.add(this.lampara);
-        this.lamparaControl = true;
+        this.lamparaControl = false;
         let cajaLampara = new THREE.Box3().setFromObject(this.lampara);
 
         this.candidates.push(cajaLampara);
@@ -109,6 +113,9 @@ class MyScene extends THREE.Scene {
 
         this.createLights();
         this.createBody();
+
+        this.cama = new cama();
+        this.add(this.cama);
     }
 
     initStats() {
@@ -239,7 +246,7 @@ class MyScene extends THREE.Scene {
         this.LightMesa.target = this.mesa;
         this.LightMesa.penumbra = 0.5;
 
-        this.add(this.spotLight, this.lampara1Light, this.LightMesa);
+        this.add(this.spotLight, this.LightMesa);
     }
 
     setLightIntensity(valor) {
@@ -378,8 +385,15 @@ class MyScene extends THREE.Scene {
 
     controlLamp(){
         if(this.lamparaControl){
+            let texture = new THREE.TextureLoader().load('../imgs/pared_5.jpg');
+            var newMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            this.pared3.material = newMaterial;
+            this.pared3.geometry.uvsNeedUpdate = true;
             this.add(this.lampara1Light);
         } else {
+            let texture = new THREE.TextureLoader().load('../imgs/pared.jpg');
+            var newMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            this.pared3.material = newMaterial;
             this.remove(this.lampara1Light);
         }
         
