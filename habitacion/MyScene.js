@@ -354,7 +354,7 @@ class MyScene extends THREE.Scene {
             let selectedObject = pickedObjects[0].object;
             //let selectedPoint = pickedObjects[0].point;
             if(selectedObject.name == "pomo") {
-                this.showAlert("Parece que la puerta está cerada...");
+                this.showAlert("Parece que la puerta está cerrada...");
             } else if(selectedObject.parent.name == "lampara") {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
