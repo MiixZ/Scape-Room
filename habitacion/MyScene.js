@@ -15,7 +15,8 @@ import { Corazon } from '../corazon/Corazon.js'
 import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
-import {MeshPhongMaterial} from "../libs/three.module.js";
+import { MeshPhongMaterial } from "../libs/three.module.js";
+import { esqueleto } from './esqueleto.js';
 
 
 /// La clase fachada del modelo
@@ -71,7 +72,7 @@ class MyScene extends THREE.Scene {
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
-            if(i === 3){
+            if (i === 3) {
                 this.pared3 = this.model.getObjectByName(name);
             }
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
@@ -81,7 +82,7 @@ class MyScene extends THREE.Scene {
         this.cajaHabitacion = new THREE.Box3().setFromObject(this.model);
 
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
-        this.pickeableObjects.push(this.model.getObjectByName("pared4")); 
+        this.pickeableObjects.push(this.model.getObjectByName("pared4"));
 
         this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 - 50;
@@ -117,6 +118,9 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.createTablon();
+
+        /*this.esqueleto = new esqueleto();
+        this.add(this.esqueleto);*/
 
         // var cajaVisible = new THREE. Box3Helper( cajaCama , 0xFFFF00 );
         // cajaVisible.visible = true;
@@ -246,7 +250,7 @@ class MyScene extends THREE.Scene {
 
         this.lampara1Light = new THREE.SpotLight(0x03FA15, 1);
         this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y,
-                                        this.DepthH / 2 - this.lampara.RadiusBase);
+            this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
 
@@ -268,8 +272,8 @@ class MyScene extends THREE.Scene {
 
     createTablon() {
         var tablonGeometry = new THREE.BoxGeometry(200, 150, 5, 100, 100);
-        var texture = new THREE.TextureLoader().load('../imgs/cabecera.jpg');
-        var tablonMaterial = new MeshPhongMaterial({map: texture});
+        var texture = new THREE.TextureLoader().load('../imgs/cabecera_8.jpg');
+        var tablonMaterial = new MeshPhongMaterial({ map: texture });
 
         this.tablon = new THREE.Mesh(tablonGeometry, tablonMaterial);
         this.tablon.position.z = -147;
@@ -390,16 +394,16 @@ class MyScene extends THREE.Scene {
             let selectedObject = pickedObjects[0].object;
             //let selectedPoint = pickedObjects[0].point;
             let distance = pickedObjects[0].distance;
-            if(selectedObject.name == "pomo" && distance < 350) {
+            if (selectedObject.name == "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
-            } else if(selectedObject.parent.name == "lampara" && distance < 350) {
+            } else if (selectedObject.parent.name == "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
             }
         }
     }
 
-    async showAlert(message){
+    async showAlert(message) {
         let alert = document.getElementById("alert");
         alert.style.display = "flex";
         alert.textContent = message;
@@ -412,25 +416,30 @@ class MyScene extends THREE.Scene {
 
     }
 
-    controlLamp(){
-        if(this.lamparaControl){
-            let texture = new THREE.TextureLoader().load('../imgs/pared_5.jpg');
-            var newMaterial = new THREE.MeshPhongMaterial({ map: texture });
+    controlLamp() {
+        if (this.lamparaControl) {
+            let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve_5.jpg');
+            let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
+
+            let newMaterial = new THREE.MeshPhongMaterial({ map: textureAux, bumpMap: textureBump, bumpScale: 1 });
             this.pared3.material = newMaterial;
             this.pared3.geometry.uvsNeedUpdate = true;
             this.add(this.lampara1Light);
         } else {
-            let texture = new THREE.TextureLoader().load('../imgs/pared.jpg');
-            var newMaterial = new THREE.MeshPhongMaterial({ map: texture });
+            let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve.jpg');
+            let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
+
+            let newMaterial = new THREE.MeshPhongMaterial({ map: textureAux, bumpMap: textureBump, bumpScale: 1 });
             this.pared3.material = newMaterial;
+            this.pared3.geometry.uvsNeedUpdate = true;
             this.remove(this.lampara1Light);
         }
-        
+
     }
 
     update() {
         if (this.stats) this.stats.update();
-        if(this.cama.box.max.x != -Infinity && !this.cajaAdd){
+        if (this.cama.box.max.x != -Infinity && !this.cajaAdd) {
             let cajaCama = new THREE.Box3().setFromObject(this.cama);
             this.candidates.push(cajaCama);
             this.cajaAdd = true;
