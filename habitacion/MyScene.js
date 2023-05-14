@@ -34,6 +34,7 @@ class MyScene extends THREE.Scene {
         this.pickeableObjects = [];
         this.previousPosition = new THREE.Vector3();
         this.cont = this.maxCont;
+        this.cajaAdd = false;
 
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
@@ -116,6 +117,12 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.createTablon();
+
+        // var cajaVisible = new THREE. Box3Helper( cajaCama , 0xFFFF00 );
+        // cajaVisible.visible = true;
+        // this.add(cajaVisible)
+
+        console.log(this.candidates);
 
         this.createLights();
         this.createBody();
@@ -416,7 +423,12 @@ class MyScene extends THREE.Scene {
 
     update() {
         if (this.stats) this.stats.update();
-
+        if(this.cama.box.max.x != -Infinity && !this.cajaAdd){
+            let cajaCama = new THREE.Box3().setFromObject(this.cama);
+            this.candidates.push(cajaCama);
+            this.cajaAdd = true;
+        }
+        // console.log(this.cama.box);
         // Se actualizan los elementos de la escena para cada frame.
         //if(this.cont == this.maxCont){
         this.body.getWorldPosition(this.previousPosition);
