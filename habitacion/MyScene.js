@@ -3,9 +3,7 @@
 import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { Stats } from '../libs/stats.module.js'
-import { FirstPersonControls } from '../libs/FirstPersonControls.js';
 import { PointerLockControls } from '../libs/PointerLockControls.js';
-
 
 // Clases de mi proyecto
 
@@ -16,8 +14,6 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
-import { esqueleto } from './esqueleto.js';
-
 
 /// La clase fachada del modelo
 /**
@@ -30,6 +26,7 @@ class MyScene extends THREE.Scene {
     DepthH = 1500;
     cameraHeight = 150;
     maxCont = 1;
+
     constructor(myCanvas) {
         super();
         this.pickeableObjects = [];
@@ -118,9 +115,6 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.createTablon();
-
-        /*this.esqueleto = new esqueleto();
-        this.add(this.esqueleto);*/
 
         // var cajaVisible = new THREE. Box3Helper( cajaCama , 0xFFFF00 );
         // cajaVisible.visible = true;
@@ -394,9 +388,9 @@ class MyScene extends THREE.Scene {
             let selectedObject = pickedObjects[0].object;
             //let selectedPoint = pickedObjects[0].point;
             let distance = pickedObjects[0].distance;
-            if (selectedObject.name == "pomo" && distance < 350) {
+            if (selectedObject.name === "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
-            } else if (selectedObject.parent.name == "lampara" && distance < 350) {
+            } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
             }
@@ -412,8 +406,6 @@ class MyScene extends THREE.Scene {
             alert.style.display = "none";
             alert.textContent = "";
         }, 2000);
-
-
     }
 
     controlLamp() {
@@ -439,7 +431,7 @@ class MyScene extends THREE.Scene {
 
     update() {
         if (this.stats) this.stats.update();
-        if (this.cama.box.max.x != -Infinity && !this.cajaAdd) {
+        if (this.cama.box.max.x !== -Infinity && !this.cajaAdd) {
             let cajaCama = new THREE.Box3().setFromObject(this.cama);
             this.candidates.push(cajaCama);
             this.cajaAdd = true;
@@ -473,7 +465,6 @@ class MyScene extends THREE.Scene {
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
         requestAnimationFrame(() => this.update());
     }
-
 }
 
 /// La función main.
