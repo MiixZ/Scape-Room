@@ -21,6 +21,7 @@ class Corazon extends THREE.Object3D {
     let hearthGeometry = new THREE.ExtrudeGeometry(shape, extrudeOptions);
     this.hearth = new THREE.Mesh(hearthGeometry, this.material);
     this.hearth.position.y = -8;
+    this.hearth.name = "corazon";
     //this.hearth.scale.set(0.7,0.7,0.7);
 
     this.add(this.hearth);

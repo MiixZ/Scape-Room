@@ -5,9 +5,10 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { Stats } from '../libs/stats.module.js'
 import { FirstPersonControls } from '../libs/FirstPersonControls.js';
 import { PointerLockControls } from '../libs/PointerLockControls.js';
+import * as TWEEN from '../libs/tween.esm.js';
 
 
-// Clases de mi proyecto
+// Clases de nuestro proyecto
 
 import { mesa } from '../mesa/mesa.js'
 import { habitacion } from './habitacion.js'
@@ -16,7 +17,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
-import { esqueleto } from './esqueleto.js';
+import { Globo } from '../globo/globo.js';
 
 
 /// La clase fachada del modelo
@@ -97,6 +98,7 @@ class MyScene extends THREE.Scene {
         this.corazon.position.x = this.WidthH / 2 - 30;
         this.corazon.position.y = this.HeightH / 3.5;
         this.add(this.corazon);
+        this.pickeableObjects.push(this.corazon);
 
         this.lampara = new lampara();
         this.lampara.position.z = this.DepthH / 2 - this.lampara.RadiusBase;
@@ -118,6 +120,13 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.createTablon();
+
+        this.globo = new Globo();
+        this.globo.position.set(this.WidthH / 2 - 80, 62, -60);
+        this.globo.rotateY(-Math.PI/2);
+
+        this.add(this.globo);
+
 
         /*this.esqueleto = new esqueleto();
         this.add(this.esqueleto);*/
@@ -399,6 +408,8 @@ class MyScene extends THREE.Scene {
             } else if (selectedObject.parent.name == "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
+            } else if(selectedObject.name == "corazon" && distance < 350) {
+                this.globo.animacion()
             }
         }
     }
@@ -472,6 +483,7 @@ class MyScene extends THREE.Scene {
         // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
         requestAnimationFrame(() => this.update());
+        TWEEN.update();
     }
 
 }
