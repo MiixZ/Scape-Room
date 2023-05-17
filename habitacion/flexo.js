@@ -10,55 +10,77 @@ class flexo extends THREE.Object3D {
 
         // Construcción del Mesh
         this.cabezaFlexo = this.createCabeza();
+        this.cuelloFlexo = this.createCuello();
+        this.cuerpoFlexo = this.createCuerpo();
 
-        this.add(this.cabezaFlexo);
+        this.add(this.cuerpoFlexo);
     }
 
     createCabeza() {
-        var csg = new CSG.CSG();    // Para hacer las operaciones booleanas con la cabeza.
+        // Crear una cabeza de flexo ayudándose con csg.
+        // Se puede crear una esfera y un cilindro y hacer la resta.
+        var csg = new CSG.CSG();
+        var csg2 = new CSG.CSG();
+        var csgAux = new CSG.CSG();
+        var materialVerde = new THREE.MeshPhongMaterial({color: 0x00ff00});
+        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff0000});
 
-        var cilindroHeight = 15,
-            cilindroRadiusTop = 15,
-            cilindroRadiusBottom = 25,
-            esferaRadius = 35;
+        var esferaGeom = new THREE.SphereGeometry(15, 10, 10);
+        var esfera2Geom = new THREE.SphereGeometry(14, 10, 10);
 
-        var materialGlobal = new THREE.MeshPhongMaterial({color: 0x000000});
+        var cilindroGeom = new THREE.CylinderGeometry(5, 9, 25, 10, 10);
 
-        var cilindroGeometry = new THREE.CylinderGeometry(cilindroRadiusTop, cilindroRadiusBottom, cilindroHeight,
-                                                    100, 100);
+        var cuboGeom = new THREE.BoxGeometry(35, 15, 35);
 
-        cilindroGeometry.translate(0.1, 0.1, 0.1);
+        var esferaMesh = new THREE.Mesh(esferaGeom, materialVerde);
+        var esfera2Mesh = new THREE.Mesh(esfera2Geom, materialVerde);
+        var cilindroMesh = new THREE.Mesh(cilindroGeom, materialRojo);
+        var cuboMesh = new THREE.Mesh(cuboGeom, materialRojo);
 
-        var esfera1Geometry = new THREE.SphereGeometry(esferaRadius, 100, 100),
-            esfera2Geometry = new THREE.SphereGeometry(esferaRadius - 0.6, 100, 100);
+        var esferaHueca = csg.subtract([esferaMesh, esfera2Mesh]).toMesh();
 
-        esfera1Geometry.translate(0.1, 0.1, 0.1);
-        esfera2Geometry.translate(0.1, 0.1, 0.1);
+        esferaHueca.position.y = -19;
 
-        var cuboGeometry = new THREE.BoxGeometry(esferaRadius, esferaRadius, esferaRadius);
+        var cabezaSinCortar = csg2.union([esferaHueca, cilindroMesh]).toMesh();
 
-        cuboGeometry.translate(0.1, 0.1, 0.1);
+        cuboMesh.position.y = -27.5;
 
-        var esfera1Mesh = new THREE.Mesh(esfera1Geometry, materialGlobal), esfera2Mesh = new THREE.Mesh(esfera2Geometry, materialGlobal),
-            cilindroMesh = new THREE.Mesh(cilindroGeometry, materialGlobal), cuboMesh = new THREE.Mesh(cuboGeometry, materialGlobal);
+        this.cabeza = csgAux.subtract([cabezaSinCortar, cuboMesh]).toMesh();
 
-        csg.subtract([esfera1Mesh, esfera2Mesh]);       // Esfera hueca.
+        this.cabeza.translateZ(-7.5);
+        this.cabeza.translateY(12.5);
+        this.cabeza.rotateX(Math.PI/3);
 
-        cuboMesh.translateY(-esferaRadius / 2);
-
-        csg.subtract([esfera1Mesh, cuboMesh]);
-
-        csg.union([cilindroMesh]);         // Cabeza.
-
-        return csg.toMesh();
+        return this.cabeza;
     }
 
     createCuello() {
+        // Crear un cuello simple con un cilindro alto y delgado acorde a las medidas de la cabeza.
+        var cuelloGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 10, 10);
+        var materialVerde = new THREE.MeshPhongMaterial({color: 0x00ff00});
 
+        this.cuelloMesh = new THREE.Mesh(cuelloGeom, materialVerde);
+
+        this.cuelloMesh.add(this.cabezaFlexo);
+
+        this.cuelloMesh.translateY(12.5);
+        this.cuelloMesh.rotateX(-Math.PI/4);
+        this.cuelloMesh.translateY(12.5);
+
+        return this.cuelloMesh;
     }
 
     createCuerpo() {
+        var cuerpoGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 10, 10);
+        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff0000});
 
+        this.cuerpoMesh = new THREE.Mesh(cuerpoGeom, materialRojo);
+
+        this.cuerpoMesh.translateY(12.5);
+
+        this.cuerpoMesh.add(this.cuelloFlexo);
+
+        return this.cuerpoMesh;
     }
 
     createBase() {
@@ -66,7 +88,11 @@ class flexo extends THREE.Object3D {
     }
 
     update() {
+        /*this.cuelloFlexo.translateY(-12.5);
+        this.cuelloFlexo.rotateZ(0.01);
+        this.cuelloFlexo.translateY(12.5);*/
 
+        this.cuerpoFlexo.rotateY(0.01);
     }
 }
 

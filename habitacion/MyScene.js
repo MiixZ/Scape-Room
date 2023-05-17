@@ -14,6 +14,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
+import {flexo} from "./flexo.js";
 
 /// La clase fachada del modelo
 /**
@@ -109,6 +110,9 @@ class MyScene extends THREE.Scene {
 
         this.cama = new cama();
         this.add(this.cama);
+
+        this.flexo = new flexo();
+        this.add(this.flexo);
 
         this.createTablon();
 
@@ -447,6 +451,7 @@ class MyScene extends THREE.Scene {
 
         this.model.update();
         this.corazon.update();
+        this.flexo.update();
 
         this.changeBodyPosition();
         this.checkColisiones();
