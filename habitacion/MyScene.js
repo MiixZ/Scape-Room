@@ -3,7 +3,6 @@
 import * as THREE from '../libs/three.module.js'
 import { GUI } from '../libs/dat.gui.module.js'
 import { Stats } from '../libs/stats.module.js'
-import { FirstPersonControls } from '../libs/FirstPersonControls.js';
 import { PointerLockControls } from '../libs/PointerLockControls.js';
 import * as TWEEN from '../libs/tween.esm.js';
 
@@ -17,6 +16,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
+import {flexo} from "./flexo.js";
 import { Globo } from '../globo/globo.js';
 
 
@@ -41,35 +41,21 @@ class MyScene extends THREE.Scene {
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
 
-        // Se añade a la gui los controles para manipular los elementos de esta clase
-        this.gui = this.createGUI();
-
         this.initStats();
-
-        // Construimos los distintos elementos que tendremos en la escena
-
-        // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta.
-        //  Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
-        // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
-
 
         // Tendremos una cámara con un control de movimiento con el ratón.
         this.createCamera();
-
-        // Un suelo
-        // this.createGround ();
 
         // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
         this.axis = new THREE.AxesHelper(5);
         this.add(this.axis);
 
-        // Por último creamos el modelo.
-        // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a
-        // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
+        // Creamos los objetos
+
         this.candidates = [];
         this.model = new habitacion();
-        // this.model.scale.y = 1.3;
         this.add(this.model);
+
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
@@ -119,6 +105,10 @@ class MyScene extends THREE.Scene {
         this.cama = new cama();
         this.add(this.cama);
 
+        this.flexo = new flexo();
+        this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.jarronMesa.position.y + 13, -100);
+        this.add(this.flexo);
+
         this.createTablon();
 
         this.globo = new Globo();
@@ -127,13 +117,6 @@ class MyScene extends THREE.Scene {
 
         this.add(this.globo);
 
-
-        /*this.esqueleto = new esqueleto();
-        this.add(this.esqueleto);*/
-
-        // var cajaVisible = new THREE. Box3Helper( cajaCama , 0xFFFF00 );
-        // cajaVisible.visible = true;
-        // this.add(cajaVisible)
 
         console.log(this.candidates);
 
@@ -214,35 +197,6 @@ class MyScene extends THREE.Scene {
 
     }
 
-    createGUI() {
-        // Se crea la interfaz gráfica de usuario
-        var gui = new GUI();
-
-        // La escena le va a añadir sus propios controles.
-        // Se definen mediante un objeto de control
-        // En este caso la intensidad de la luz y si se muestran o no los ejes
-        this.guiControls = {
-            // En el contexto de una función   this   alude a la función
-            lightIntensity: 0.5,
-            axisOnOff: true
-        }
-
-        // Se crea una sección para los controles de esta clase
-        var folder = gui.addFolder('Luz y Ejes');
-
-        // Se le añade un control para la intensidad de la luz
-        folder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1)
-            .name('Intensidad de la Luz: ')
-            .onChange((value) => this.setLightIntensity(value));
-
-        // Y otro para mostrar u ocultar los ejes
-        folder.add(this.guiControls, 'axisOnOff')
-            .name('Mostrar ejes : ')
-            .onChange((value) => this.setAxisVisible(value));
-
-        return gui;
-    }
-
     createLights() {
         // Se crea una luz ambiental, evita que se vean completamente negras las zonas donde no incide de manera directa una fuente de luz
         // La luz ambiental solo tiene un color y una intensidad
@@ -271,7 +225,7 @@ class MyScene extends THREE.Scene {
         this.spotLight2.position.set(-this.WidthH / 2, this.HeightH, -this.DepthH / 2);
         this.spotLight2.target = this.lampara;
 
-        this.LightMesa = new THREE.SpotLight(0x0944EE, 0.6);
+        this.LightMesa = new THREE.SpotLight(0xff0055, 0.6);
         this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
         this.LightMesa.target = this.mesa;
         this.LightMesa.penumbra = 0.5;
@@ -403,12 +357,12 @@ class MyScene extends THREE.Scene {
             let selectedObject = pickedObjects[0].object;
             //let selectedPoint = pickedObjects[0].point;
             let distance = pickedObjects[0].distance;
-            if (selectedObject.name == "pomo" && distance < 350) {
+            if (selectedObject.name === "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
-            } else if (selectedObject.parent.name == "lampara" && distance < 350) {
+            } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
-            } else if(selectedObject.name == "corazon" && distance < 350) {
+            } else if(selectedObject.name === "corazon" && distance < 350) {
                 this.globo.animacion()
             }
         }
@@ -423,8 +377,6 @@ class MyScene extends THREE.Scene {
             alert.style.display = "none";
             alert.textContent = "";
         }, 2000);
-
-
     }
 
     controlLamp() {
@@ -450,7 +402,7 @@ class MyScene extends THREE.Scene {
 
     update() {
         if (this.stats) this.stats.update();
-        if (this.cama.box.max.x != -Infinity && !this.cajaAdd) {
+        if (this.cama.box.max.x !== -Infinity && !this.cajaAdd) {
             let cajaCama = new THREE.Box3().setFromObject(this.cama);
             this.candidates.push(cajaCama);
             this.cajaAdd = true;
@@ -470,6 +422,7 @@ class MyScene extends THREE.Scene {
 
         this.model.update();
         this.corazon.update();
+        this.flexo.update();
 
         this.changeBodyPosition();
         this.checkColisiones();
@@ -485,7 +438,6 @@ class MyScene extends THREE.Scene {
         requestAnimationFrame(() => this.update());
         TWEEN.update();
     }
-
 }
 
 /// La función main.
