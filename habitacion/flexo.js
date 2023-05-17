@@ -2,6 +2,7 @@ import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
 
 class flexo extends THREE.Object3D {
+    rotacion = false;
 
     constructor() {
         super();
@@ -12,8 +13,9 @@ class flexo extends THREE.Object3D {
         this.cabezaFlexo = this.createCabeza();
         this.cuelloFlexo = this.createCuello();
         this.cuerpoFlexo = this.createCuerpo();
+        this.baseFlexo = this.createBase();
 
-        this.add(this.cuerpoFlexo);
+        this.add(this.baseFlexo);
     }
 
     createCabeza() {
@@ -80,11 +82,22 @@ class flexo extends THREE.Object3D {
 
         this.cuerpoMesh.add(this.cuelloFlexo);
 
+        this.cuerpoMesh.translateY(0.25);
+
         return this.cuerpoMesh;
     }
 
     createBase() {
+        var baseGeom = new THREE.CylinderGeometry(15, 15, 0.5, 100, 10);
+        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff00ff});
 
+        var baseMesh = new THREE.Mesh(baseGeom, materialRojo);
+
+        baseMesh.translateY(0.25);
+
+        baseMesh.add(this.cuerpoFlexo);
+
+        return baseMesh;
     }
 
     update() {
