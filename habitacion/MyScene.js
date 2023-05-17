@@ -112,7 +112,7 @@ class MyScene extends THREE.Scene {
         this.createTablon();
 
         this.globo = new Globo();
-        this.globo.position.set(this.WidthH / 2 - 80, 62, -60);
+        this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
         this.globo.rotateY(-Math.PI/2);
 
         this.add(this.globo);
