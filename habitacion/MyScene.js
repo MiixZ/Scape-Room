@@ -40,29 +40,19 @@ class MyScene extends THREE.Scene {
 
         this.initStats();
 
-        // Construimos los distintos elementos que tendremos en la escena
-
-        // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta.
-        //  Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
-
-
         // Tendremos una cámara con un control de movimiento con el ratón.
         this.createCamera();
-
-        // Un suelo
-        // this.createGround ();
 
         // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
         this.axis = new THREE.AxesHelper(5);
         this.add(this.axis);
 
-        // Por último creamos el modelo.
-        // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a
-        // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
+        // Creamos los objetos
+
         this.candidates = [];
         this.model = new habitacion();
-        // this.model.scale.y = 1.3;
         this.add(this.model);
+
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
@@ -84,6 +74,7 @@ class MyScene extends THREE.Scene {
         this.mesa.jarronMesa.scale.x += 1.3;
         this.mesa.scale.y = 1.2;
         this.add(this.mesa);
+
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
         this.candidates.push(cajaMesa);
 
@@ -97,6 +88,7 @@ class MyScene extends THREE.Scene {
         this.lampara.position.x = this.WidthH / 2 - this.lampara.RadiusBase;
         this.lampara.name = "lampara";
         this.add(this.lampara);
+
         this.lamparaControl = false;
         let cajaLampara = new THREE.Box3().setFromObject(this.lampara);
 
@@ -112,6 +104,7 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.flexo = new flexo();
+        this.flexo.position.set(this.WidthH / 2 - 45, this.mesa.jarronMesa.position.y + 13, -50);
         this.add(this.flexo);
 
         this.createTablon();
@@ -199,35 +192,6 @@ class MyScene extends THREE.Scene {
 
     }
 
-    createGUI() {
-        // Se crea la interfaz gráfica de usuario
-        var gui = new GUI();
-
-        // La escena le va a añadir sus propios controles.
-        // Se definen mediante un objeto de control
-        // En este caso la intensidad de la luz y si se muestran o no los ejes
-        this.guiControls = {
-            // En el contexto de una función   this   alude a la función
-            lightIntensity: 0.5,
-            axisOnOff: true
-        }
-
-        // Se crea una sección para los controles de esta clase
-        var folder = gui.addFolder('Luz y Ejes');
-
-        // Se le añade un control para la intensidad de la luz
-        folder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1)
-            .name('Intensidad de la Luz: ')
-            .onChange((value) => this.setLightIntensity(value));
-
-        // Y otro para mostrar u ocultar los ejes
-        folder.add(this.guiControls, 'axisOnOff')
-            .name('Mostrar ejes : ')
-            .onChange((value) => this.setAxisVisible(value));
-
-        return gui;
-    }
-
     createLights() {
         // Se crea una luz ambiental, evita que se vean completamente negras las zonas donde no incide de manera directa una fuente de luz
         // La luz ambiental solo tiene un color y una intensidad
@@ -256,7 +220,7 @@ class MyScene extends THREE.Scene {
         this.spotLight2.position.set(-this.WidthH / 2, this.HeightH, -this.DepthH / 2);
         this.spotLight2.target = this.lampara;
 
-        this.LightMesa = new THREE.SpotLight(0x0944EE, 0.6);
+        this.LightMesa = new THREE.SpotLight(0xff0055, 0.6);
         this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
         this.LightMesa.target = this.mesa;
         this.LightMesa.penumbra = 0.5;

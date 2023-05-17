@@ -13,7 +13,7 @@ class flexo extends THREE.Object3D {
         this.cabezaFlexo = this.createCabeza();
         this.cuelloFlexo = this.createCuello();
         this.cuerpoFlexo = this.createCuerpo();
-        this.baseFlexo = this.createBase();
+        this.baseFlexo = this.createBase();             // Realmente es el flexo entero.
 
         this.add(this.baseFlexo);
     }
@@ -53,12 +53,17 @@ class flexo extends THREE.Object3D {
         this.cabeza.translateY(12.5);
         this.cabeza.rotateX(Math.PI/3);
 
+        this.light = new THREE.SpotLight(0x0000ff, 1);
+        this.light.target = this.cabeza;
+        this.light.angle = Math.PI/4;
+        this.cabeza.add(this.light);
+
         return this.cabeza;
     }
 
     createCuello() {
         // Crear un cuello simple con un cilindro alto y delgado acorde a las medidas de la cabeza.
-        var cuelloGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 10, 10);
+        var cuelloGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 100, 100);
         var materialVerde = new THREE.MeshPhongMaterial({color: 0x00ff00});
 
         this.cuelloMesh = new THREE.Mesh(cuelloGeom, materialVerde);
@@ -78,9 +83,14 @@ class flexo extends THREE.Object3D {
 
         this.cuerpoMesh = new THREE.Mesh(cuerpoGeom, materialRojo);
 
+        var apoyoCuelloGeom = new THREE.SphereGeometry(2.5, 100, 100);
+
+        this.apoyoCuelloMesh = new THREE.Mesh(apoyoCuelloGeom, materialRojo);
+        this.apoyoCuelloMesh.position.y = 12.5;
+
         this.cuerpoMesh.translateY(12.5);
 
-        this.cuerpoMesh.add(this.cuelloFlexo);
+        this.cuerpoMesh.add(this.cuelloFlexo, this.apoyoCuelloMesh);
 
         this.cuerpoMesh.translateY(0.25);
 
@@ -101,9 +111,11 @@ class flexo extends THREE.Object3D {
     }
 
     update() {
-        /*this.cuelloFlexo.translateY(-12.5);
+        this.cuelloFlexo.translateY(-12.5);
+        this.cuelloMesh.rotateX(Math.PI/4);
         this.cuelloFlexo.rotateZ(0.01);
-        this.cuelloFlexo.translateY(12.5);*/
+        this.cuelloMesh.rotateX(-Math.PI/4);
+        this.cuelloFlexo.translateY(12.5);
 
         this.cuerpoFlexo.rotateY(0.01);
     }
