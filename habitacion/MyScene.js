@@ -104,7 +104,7 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.flexo = new flexo();
-        this.flexo.position.set(this.WidthH / 2 - 45, this.mesa.jarronMesa.position.y + 13, -50);
+        this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.jarronMesa.position.y + 13, -100);
         this.add(this.flexo);
 
         this.createTablon();

@@ -53,10 +53,23 @@ class flexo extends THREE.Object3D {
         this.cabeza.translateY(12.5);
         this.cabeza.rotateX(Math.PI/3);
 
+        var bombillaGeom = new THREE.SphereGeometry(3, 100, 100);
+        var bombillaMat = new THREE.MeshPhongMaterial({color: 0x0f0fff,    // Color blanco
+                                                                                 shininess: 100,     // Brillo máximo
+                                                                                 specular: 0xffffff  // Reflejo máximo
+                                                                                 });
+
+        var bombillaMesh = new THREE.Mesh(bombillaGeom, bombillaMat);
+        bombillaMesh.position.y = -12;
+
         this.light = new THREE.SpotLight(0x0000ff, 1);
         this.light.target = this.cabeza;
-        this.light.angle = Math.PI/4;
-        this.cabeza.add(this.light);
+        this.light.angle = Math.PI/6;
+        this.light.penumbra = 0.6;
+        this.light.decay = 0.5;
+        this.light.position.y = 100;
+
+        this.cabeza.add(this.light, bombillaMesh);
 
         return this.cabeza;
     }
@@ -112,9 +125,9 @@ class flexo extends THREE.Object3D {
 
     update() {
         this.cuelloFlexo.translateY(-12.5);
-        this.cuelloMesh.rotateX(Math.PI/4);
-        this.cuelloFlexo.rotateZ(0.01);
-        this.cuelloMesh.rotateX(-Math.PI/4);
+        this.cuelloFlexo.rotateX(Math.PI/4);
+        this.cuelloFlexo.rotateZ(0.02);
+        this.cuelloFlexo.rotateX(-Math.PI/4);
         this.cuelloFlexo.translateY(12.5);
 
         this.cuerpoFlexo.rotateY(0.01);
