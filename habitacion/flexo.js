@@ -1,8 +1,11 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
+import * as TWEEN from '../libs/tween.esm.js';
 
 class flexo extends THREE.Object3D {
-    rotacion = false;
+    texture = new THREE.TextureLoader().load('../imgs/flexo.jpg');
+    material = new THREE.MeshPhysicalMaterial({map: this.texture});
+    empiezaAnimacion = false;
 
     constructor() {
         super();
@@ -24,8 +27,6 @@ class flexo extends THREE.Object3D {
         var csg = new CSG.CSG();
         var csg2 = new CSG.CSG();
         var csgAux = new CSG.CSG();
-        var materialVerde = new THREE.MeshPhongMaterial({color: 0x00ff00});
-        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff0000});
 
         var esferaGeom = new THREE.SphereGeometry(15, 10, 10);
         var esfera2Geom = new THREE.SphereGeometry(14, 10, 10);
@@ -34,10 +35,10 @@ class flexo extends THREE.Object3D {
 
         var cuboGeom = new THREE.BoxGeometry(35, 15, 35);
 
-        var esferaMesh = new THREE.Mesh(esferaGeom, materialVerde);
-        var esfera2Mesh = new THREE.Mesh(esfera2Geom, materialVerde);
-        var cilindroMesh = new THREE.Mesh(cilindroGeom, materialRojo);
-        var cuboMesh = new THREE.Mesh(cuboGeom, materialRojo);
+        var esferaMesh = new THREE.Mesh(esferaGeom, this.material);
+        var esfera2Mesh = new THREE.Mesh(esfera2Geom, this.material);
+        var cilindroMesh = new THREE.Mesh(cilindroGeom, this.material);
+        var cuboMesh = new THREE.Mesh(cuboGeom, this.material);
 
         var esferaHueca = csg.subtract([esferaMesh, esfera2Mesh]).toMesh();
 
@@ -77,9 +78,8 @@ class flexo extends THREE.Object3D {
     createCuello() {
         // Crear un cuello simple con un cilindro alto y delgado acorde a las medidas de la cabeza.
         var cuelloGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 100, 100);
-        var materialVerde = new THREE.MeshPhongMaterial({color: 0x00ff00});
 
-        this.cuelloMesh = new THREE.Mesh(cuelloGeom, materialVerde);
+        this.cuelloMesh = new THREE.Mesh(cuelloGeom, this.material);
 
         this.cuelloMesh.add(this.cabezaFlexo);
 
@@ -91,14 +91,13 @@ class flexo extends THREE.Object3D {
     }
 
     createCuerpo() {
-        var cuerpoGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 10, 10);
-        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff0000});
+        var cuerpoGeom = new THREE.CylinderGeometry(2.5, 2.5, 25, 100, 100);
 
-        this.cuerpoMesh = new THREE.Mesh(cuerpoGeom, materialRojo);
+        this.cuerpoMesh = new THREE.Mesh(cuerpoGeom, this.material);
 
         var apoyoCuelloGeom = new THREE.SphereGeometry(2.5, 100, 100);
 
-        this.apoyoCuelloMesh = new THREE.Mesh(apoyoCuelloGeom, materialRojo);
+        this.apoyoCuelloMesh = new THREE.Mesh(apoyoCuelloGeom, this.material);
         this.apoyoCuelloMesh.position.y = 12.5;
 
         this.cuerpoMesh.translateY(12.5);
@@ -112,9 +111,8 @@ class flexo extends THREE.Object3D {
 
     createBase() {
         var baseGeom = new THREE.CylinderGeometry(15, 15, 0.5, 100, 10);
-        var materialRojo = new THREE.MeshPhongMaterial({color: 0xff00ff});
 
-        var baseMesh = new THREE.Mesh(baseGeom, materialRojo);
+        var baseMesh = new THREE.Mesh(baseGeom, this.material);
 
         baseMesh.translateY(0.25);
 
@@ -123,12 +121,35 @@ class flexo extends THREE.Object3D {
         return baseMesh;
     }
 
+    animacion(){
+        if(!this.empiezaAnimacion) {
+            let rotacion = {z:0};
+            let rotacionFinal = {z: Math.PI/2}
+            let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 20000)
+                .easing(TWEEN.Easing.Linear.None)
+                .onUpdate(() => {
+                    this.cuelloFlexo.translateY(-12.5);
+                    this.cuelloFlexo.rotateX(Math.PI/4);
+                    this.cuelloFlexo.rotateZ(rotacion.z);
+                    this.cuelloFlexo.rotateX(-Math.PI/4);
+                    this.cuelloFlexo.translateY(12.5);
+                });
+
+            movimiento.start();
+
+            this.empiezaAnimacion = true;
+        }
+    }
+
     update() {
-        this.cuelloFlexo.translateY(-12.5);
+        /*this.cuelloFlexo.translateY(-12.5);
         this.cuelloFlexo.rotateX(Math.PI/4);
         this.cuelloFlexo.rotateZ(0.02);
         this.cuelloFlexo.rotateX(-Math.PI/4);
-        this.cuelloFlexo.translateY(12.5);
+        this.cuelloFlexo.translateY(12.5);*/
+        TWEEN.update();
+
+        this.animacion();
 
         this.cuerpoFlexo.rotateY(0.01);
     }

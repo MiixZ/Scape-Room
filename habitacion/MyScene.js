@@ -117,7 +117,6 @@ class MyScene extends THREE.Scene {
 
         this.add(this.globo);
 
-
         console.log(this.candidates);
 
         this.createLights();
@@ -363,7 +362,7 @@ class MyScene extends THREE.Scene {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
             } else if(selectedObject.name === "corazon" && distance < 350) {
-                this.globo.animacion()
+                this.globo.animacion();
             }
         }
     }
