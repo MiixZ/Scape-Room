@@ -73,18 +73,18 @@ class MyScene extends THREE.Scene {
 
         this.mesa = new mesa();
         this.mesa.position.x = this.WidthH / 2 - 50;
-        this.mesa.scale.z = 1.3;
-        this.mesa.jarronMesa.scale.x += 1.3;
-        this.mesa.scale.y = 1.2;
+
+        this.mesa.jarronMesa.position.z = 0;
+        this.mesa.jarronMesa.position.x= 10;
         this.add(this.mesa);
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
         this.candidates.push(cajaMesa);
 
-        this.corazon = new Corazon();
-        this.corazon.position.x = this.WidthH / 2 - 30;
+        /*this.corazon = new Corazon();
+        this.corazon.position.x = this.WidthH / 2 - 45;
         this.corazon.position.y = this.HeightH / 3.5;
-        this.add(this.corazon);
-        this.pickeableObjects.push(this.corazon);
+        this.add(this.corazon);*/
+        this.pickeableObjects.push(this.mesa.jarronMesa.corazon);
 
         this.lampara = new lampara();
         this.lampara.position.z = this.DepthH / 2 - this.lampara.RadiusBase;
@@ -106,7 +106,7 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.flexo = new flexo();
-        this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.jarronMesa.position.y + 13, -100);
+        this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
         this.add(this.flexo);
 
         this.createTablon();
@@ -420,8 +420,8 @@ class MyScene extends THREE.Scene {
         this.tiempoI = this.tiempoF;
 
         this.model.update();
-        this.corazon.update();
         this.flexo.update();
+        this.mesa.update();
 
         this.changeBodyPosition();
         this.checkColisiones();

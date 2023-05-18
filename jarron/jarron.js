@@ -1,5 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
+import { Corazon } from '../corazon/Corazon.js';
 
 class jarron extends THREE.Object3D {
     jarron;
@@ -13,6 +14,9 @@ class jarron extends THREE.Object3D {
         this.jarron = this.createJarron();
 
         // Y añadirlo como hijo del Object3D (el this)
+        this.corazon = new Corazon();
+        this.corazon.position.y = 30;
+        this.add(this.corazon);
         this.add(this.jarron);
     }
 
@@ -38,7 +42,7 @@ class jarron extends THREE.Object3D {
     }
 
     update() {
-
+        this.corazon.update();
     }
 }
 

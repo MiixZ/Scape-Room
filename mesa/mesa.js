@@ -10,8 +10,8 @@ class mesa extends THREE.Object3D {
     superficie;
     jarronMesa;
     mesaWidth = 100;
-    mesaHeight = 50;
-    mesaDepth = 200;
+    mesaHeight = 60;
+    mesaDepth = 260;
 
     constructor() {
         super();
@@ -69,7 +69,7 @@ class mesa extends THREE.Object3D {
         // Cilindro 3 -> Pata trasera derecha.
         // Cilindro 4 -> Pata trasera izquierda.
 
-        this.jarronMesa.scale.set(10, 10, 10);
+        this.jarronMesa.jarron.scale.set(10, 10, 10);
 
         this.pata.position.y = this.mesaHeight / 2;
         this.pata2.position.y = this.mesaHeight / 2;
@@ -106,7 +106,7 @@ class mesa extends THREE.Object3D {
     }
 
     update () {
-
+        this.jarronMesa.update()    ;
     }
 }
 
