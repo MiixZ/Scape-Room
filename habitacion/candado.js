@@ -1,27 +1,33 @@
 import * as THREE from '../libs/three.module.js'
-import * as CSG from '../libs/CSG-v2.js'
 
 class candado extends THREE.Object3D {
+    // Material marrón.
+    materialMarron = new THREE.MeshPhongMaterial({color: 0x654321});
+    // Material plateado.
+    materialPlateado = new THREE.MeshPhongMaterial({color: 0xCCCCCC});
 
     constructor() {
         super();
 
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
+        // Se crea la parte de la interfaz que corresponde a la caja.
+        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz.
 
         // Construcción del Mesh
-        this.createFoco();
-
+        this.createCandado();
     }
 
-    createFoco() {
-        var focoGeometry = new THREE.CylinderGeometry(15, 30, 50, 100, 100);
+    createCandado() {
+        var cuerpo = new THREE.CylinderGeometry(3, 3, 7, 100, 100);
+        var toro = new THREE.TorusGeometry(4, 0.5, 100, 100);
 
-        var texture = new THREE.TextureLoader().load('../imgs/foco.webp');
-        var focoMaterial = new THREE.MeshPhongMaterial({map: texture});
-        var foco = new THREE.Mesh(focoGeometry, focoMaterial);
+        let candadoMesh = new THREE.Mesh(cuerpo, this.materialMarron);
+        let toroMesh = new THREE.Mesh(toro, this.materialPlateado);
 
-        this.add(foco);
+        candadoMesh.translateY(3.5);
+        toroMesh.translateY(9);
+        candadoMesh.scale.set(2, 1, 1);
+
+        this.add(candadoMesh, toroMesh);
     }
 
     update() {

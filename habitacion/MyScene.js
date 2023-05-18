@@ -16,6 +16,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
+import { candado } from "./candado.js";
 import {flexo} from "./flexo.js";
 import { Globo } from '../globo/globo.js';
 
@@ -112,8 +113,11 @@ class MyScene extends THREE.Scene {
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
         this.globo.rotateY(-Math.PI/2);
-
         this.add(this.globo);
+
+        this.candado = new candado();
+        this.add(this.candado);
+        this.candado.position.set()
 
         console.log(this.candidates);
 
