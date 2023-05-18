@@ -124,16 +124,64 @@ class flexo extends THREE.Object3D {
     animacion(){
         if(!this.empiezaAnimacion) {
             let rotacion = {z:0};
-            let rotacionFinal = {z: Math.PI/2}
-            let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 20000)
+            let rotacionFinal = {z: Math.PI};
+            let rotacion2 = {z:Math.PI};
+            let rotacionFinal2 = {z:2*Math.PI};
+            let ix = 0;
+            let sentidox = true;
+            let iz = 0;
+            let sentidoz = true;
+
+            let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 500)
                 .easing(TWEEN.Easing.Linear.None)
                 .onUpdate(() => {
                     this.cuelloFlexo.translateY(-12.5);
                     this.cuelloFlexo.rotateX(Math.PI/4);
-                    this.cuelloFlexo.rotateZ(rotacion.z);
+                    this.cuelloFlexo.rotation.z = rotacion.z;
                     this.cuelloFlexo.rotateX(-Math.PI/4);
                     this.cuelloFlexo.translateY(12.5);
+                }).onComplete(() => {
+                    if(ix === 5) {
+                        sentidox = false;
+                    } else if (ix === 0) {
+                        sentidox = true;
+                    }
+
+                    if(sentidox) {
+                        this.position.x += 5;
+                        ix++;
+                    } else {
+                        this.position.x -= 5;
+                        ix--;
+                    }
                 });
+
+            let movimiento2 = new TWEEN.Tween(rotacion2).to(rotacionFinal2, 2000)
+                .easing(TWEEN.Easing.Linear.None)
+                .onUpdate(() => {
+                    this.cuelloFlexo.translateY(-12.5);
+                    this.cuelloFlexo.rotateX(Math.PI/4);
+                    this.cuelloFlexo.rotation.z = rotacion2.z;
+                    this.cuelloFlexo.rotateX(-Math.PI/4);
+                    this.cuelloFlexo.translateY(12.5);
+                }).onComplete(() => {
+                    if(iz === 5) {
+                        sentidoz = false;
+                    } else if (iz === 0) {
+                        sentidoz = true;
+                    }
+
+                    if(sentidoz) {
+                        this.position.z += 5;
+                        iz++;
+                    } else {
+                        this.position.z -= 5;
+                        iz--;
+                    }
+                });
+
+            movimiento.chain(movimiento2);
+            movimiento2.chain(movimiento);
 
             movimiento.start();
 
