@@ -16,6 +16,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
+import { candado } from "./candado.js";
 import {flexo} from "./flexo.js";
 import { Globo } from '../globo/globo.js';
 
@@ -109,13 +110,14 @@ class MyScene extends THREE.Scene {
         this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
         this.add(this.flexo);
 
-        this.createTablon();
-
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
         this.globo.rotateY(-Math.PI/2);
-
         this.add(this.globo);
+
+        this.candado = new candado();
+        this.add(this.candado);
+        this.candado.position.set()
 
         console.log(this.candidates);
 
@@ -230,26 +232,6 @@ class MyScene extends THREE.Scene {
         this.LightMesa.penumbra = 0.5;
 
         this.add(this.spotLight, this.LightMesa, this.spotLight2);
-    }
-
-    createTablon() {
-        var tablonGeometry = new THREE.BoxGeometry(200, 150, 5, 100, 100);
-        var texture = new THREE.TextureLoader().load('../imgs/cabecera_8.jpg');
-        var tablonMaterial = new MeshPhongMaterial({ map: texture });
-
-        this.tablon = new THREE.Mesh(tablonGeometry, tablonMaterial);
-        this.tablon.position.z = -147;
-        this.tablon.position.y = 75;
-        this.tablon.position.x = -273;
-        this.add(this.tablon);
-    }
-
-    setLightIntensity(valor) {
-        this.spotLight.intensity = valor;
-    }
-
-    setAxisVisible(valor) {
-        this.axis.visible = valor;
     }
 
     createRenderer(myCanvas) {

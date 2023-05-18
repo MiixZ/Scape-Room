@@ -1,5 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
+import { candado } from "./candado.js";
 
 class habitacion extends THREE.Object3D {
     WidthH = 750;
@@ -110,6 +111,11 @@ class habitacion extends THREE.Object3D {
 
         var ApoyoMesh = new THREE.Mesh(geometryApoyo, material);
         var PomoMesh = new THREE.Mesh(geometryPomo, material);
+        this.candado = new candado();
+        this.candado.position.set(-2*this.puertaWidth / 5, -9,  1.25);
+
+        PomoMesh.add(this.candado);
+
         PomoMesh.name = "pomo";
         this.puerta.add(ApoyoMesh, PomoMesh);
     }
