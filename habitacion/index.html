@@ -33,7 +33,6 @@
       background-color: #999999;
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      visibility: hidden;
     }
 
     .alert {
@@ -52,12 +51,12 @@
     }
 
     .combinacion_contenedor {
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 40%;
+      left: 40%;
       width: 22rem;
       height: 15rem;
       background-color: rgba(0, 0, 0, 0.5);
@@ -84,23 +83,30 @@
     .button {
       display: flex;
       /* justify-items: center; */
-   align-content: center;
-   justify-content: center;
-      text-align: center;
+      align-content: center;
+      justify-content: center;
       width: 6rem;
       height: 3rem;
       border-radius: 1rem;
       background-color: grey;
+      height: 2rem;
+      cursor: pointer;
+    }
+    .button div {
+      height: fit-content;
+      align-self: center;
     }
 
     .button:hover {
       background-color: #444444;
       /* Green */
       color: white;
+
     }
+
     input {
       border-radius: 1rem;
-    } 
+    }
   </style>
 </head>
 
@@ -118,14 +124,16 @@
 
   <div id="puntero" class="punto"></div>
   <div id="alert" class="alert"></div>
-  <div class="combinacion_contenedor">
-    <h2>Introduce la combinación</h2>
+  <div id="contenedor" class="combinacion_contenedor">
+    <h2>Adivina la combinación</h2>
     <div class="combinacion">
-      <input type="number" id="num1" style="border: solid 0.5rem green;">
-      <input type="number" id="num2" style="border: solid 0.5rem yellow;">
-      <input type="number" id="num3" style="border: solid 0.5rem red;">
+      <input type="number" id="num1" style="border: solid 0.5rem green;" min="0" max="9">
+      <input type="number" id="num2" style="border: solid 0.5rem yellow;" min="0" max="9">
+      <input type="number" id="num3" style="border: solid 0.5rem red;" min="0" max="9">
     </div>
-    <div class="button"><div>Introducir</div></div>
+    <div id="button" class="button">
+      <div>Aceptar</div>
+    </div>
 
   </div>
 </body>

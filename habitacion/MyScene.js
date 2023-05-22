@@ -16,7 +16,7 @@ import { lampara } from './lampara.js'
 import { foco } from './foco.js'
 import { cama } from './cama.js';
 import { MeshPhongMaterial } from "../libs/three.module.js";
-import {flexo} from "./flexo.js";
+import { flexo } from "./flexo.js";
 import { Globo } from '../globo/globo.js';
 
 
@@ -31,6 +31,10 @@ class MyScene extends THREE.Scene {
     DepthH = 1500;
     cameraHeight = 150;
     maxCont = 1;
+
+    static doorUnlocked = false;
+    static panelClave = false;
+
     constructor(myCanvas) {
         super();
         this.pickeableObjects = [];
@@ -75,7 +79,7 @@ class MyScene extends THREE.Scene {
         this.mesa.position.x = this.WidthH / 2 - 50;
 
         this.mesa.jarronMesa.position.z = 0;
-        this.mesa.jarronMesa.position.x= 10;
+        this.mesa.jarronMesa.position.x = 10;
         this.add(this.mesa);
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
         this.candidates.push(cajaMesa);
@@ -113,7 +117,7 @@ class MyScene extends THREE.Scene {
 
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
-        this.globo.rotateY(-Math.PI/2);
+        this.globo.rotateY(-Math.PI / 2);
 
         this.add(this.globo);
 
@@ -358,10 +362,11 @@ class MyScene extends THREE.Scene {
             let distance = pickedObjects[0].distance;
             if (selectedObject.name === "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
+                this.mostrarContenedorClave();
             } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
-            } else if(selectedObject.name === "corazon" && distance < 350) {
+            } else if (selectedObject.name === "corazon" && distance < 350) {
                 this.globo.animacion();
             }
         }
@@ -397,6 +402,30 @@ class MyScene extends THREE.Scene {
             this.remove(this.lampara1Light);
         }
 
+    }
+
+    comprobarClave() {
+        let num1 = document.getElementById("num1").value;
+        let num2 = document.getElementById("num2").value;
+        let num3 = document.getElementById("num3").value;
+
+        if (num1 == 5 && num2 == 8 && num3 == 0) {
+            this.doorUnlocked = true;
+            this.showAlert("He encontrado la clave correcta");
+        } else {
+            this.showAlert("Parece que la clave no es correcta...");
+        }
+        document.getElementById("contenedor").style.display = "none";
+        document.getElementById("puntero").style.display = "flex";
+        
+    }
+
+    mostrarContenedorClave(){
+        document.getElementById("contenedor").style.display = "flex";
+        document.getElementById("puntero").style.display = "none";
+        document.getElementById("num1").value = "";
+        document.getElementById("num2").value = "";
+        document.getElementById("num3").value = "";
     }
 
     update() {
@@ -449,6 +478,8 @@ $(function () {
     window.addEventListener('keydown', (event) => scene.mover(event));
     window.addEventListener('keyup', (event) => scene.parar(event));
     window.addEventListener('click', (event) => scene.pick(event));
+    const boton = document.getElementById("button");
+    boton.addEventListener('click', () => scene.comprobarClave());
 
     // Que no se nos olvide, la primera visualización.
     scene.update();

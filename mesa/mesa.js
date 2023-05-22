@@ -106,7 +106,7 @@ class mesa extends THREE.Object3D {
     }
 
     update () {
-        this.jarronMesa.update()    ;
+        this.jarronMesa.update();
     }
 }
 
