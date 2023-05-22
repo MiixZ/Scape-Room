@@ -33,6 +33,7 @@
       background-color: #999999;
       border-radius: 50%;
       transform: translate(-50%, -50%);
+      visibility: hidden;
     }
 
     .alert {
@@ -49,6 +50,57 @@
       justify-content: center;
       align-items: center;
     }
+
+    .combinacion_contenedor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 22rem;
+      height: 15rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 2rem;
+      color: white;
+    }
+
+    .combinacion_contenedor p {
+      text-align: center;
+    }
+
+    .combinacion {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+
+    .combinacion input {
+      margin-right: 1rem;
+      width: 3rem;
+      height: 5rem;
+      font-size: larger;
+    }
+
+    .button {
+      display: flex;
+      /* justify-items: center; */
+   align-content: center;
+   justify-content: center;
+      text-align: center;
+      width: 6rem;
+      height: 3rem;
+      border-radius: 1rem;
+      background-color: grey;
+    }
+
+    .button:hover {
+      background-color: #444444;
+      /* Green */
+      color: white;
+    }
+    input {
+      border-radius: 1rem;
+    } 
   </style>
 </head>
 
@@ -64,8 +116,18 @@
 
   </div>
 
-  <div class="punto"></div>
+  <div id="puntero" class="punto"></div>
   <div id="alert" class="alert"></div>
+  <div class="combinacion_contenedor">
+    <h2>Introduce la combinación</h2>
+    <div class="combinacion">
+      <input type="number" id="num1" style="border: solid 0.5rem green;">
+      <input type="number" id="num2" style="border: solid 0.5rem yellow;">
+      <input type="number" id="num3" style="border: solid 0.5rem red;">
+    </div>
+    <div class="button"><div>Introducir</div></div>
+
+  </div>
 </body>
 
 </html>
