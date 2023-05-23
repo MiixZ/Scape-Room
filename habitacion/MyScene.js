@@ -75,7 +75,7 @@ class MyScene extends THREE.Scene {
 
         this.mesa.jarronMesa.position.z = 0;
         this.mesa.jarronMesa.position.x= 10;
-        this.mesa.jarronMesa.name = "jarron";
+        this.pickeableObjects.push(this.mesa.jarronMesa);
         this.add(this.mesa);
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
         this.candidates.push(cajaMesa);
@@ -343,7 +343,6 @@ class MyScene extends THREE.Scene {
 
         if (pickedObjects.length > 0) {
             let selectedObject = pickedObjects[0].object;
-            console.log(selectedObject.name);
             //let selectedPoint = pickedObjects[0].point;
             let distance = pickedObjects[0].distance;
             if (selectedObject.name === "pomo" && distance < 350) {
@@ -355,6 +354,7 @@ class MyScene extends THREE.Scene {
                 this.mesa.jarronMesa.animacionCorazon();
             } else if(selectedObject.name === "corazon" && distance < 350) {
                 this.globo.animacion();
+                this.mesa.jarronMesa.explotaCorazon();
             }
         }
     }

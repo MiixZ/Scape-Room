@@ -10,6 +10,7 @@ class jarron extends THREE.Object3D {
 
         // Construcción del Mesh
         this.jarron = this.createJarron();
+        this.jarron.name = "jarron";
 
         // Y añadirlo como hijo del Object3D (el this)
         this.corazon = new Corazon();
@@ -37,20 +38,34 @@ class jarron extends THREE.Object3D {
 
         csg.subtract([esfera2Mesh, esfera3Mesh]);  // Entre corchetes porque tiene que iterar un array.
         csg.subtract([esfera1Mesh]);
-        csg.name = "jarron";
         return csg.toMesh();
     }
 
     animacionCorazon() {
-        let rotacion = {y: 0};
-        let rotacionFinal = {y: 20};
+        let rotacion = { y: this.corazon.position.y };
+        let rotacionFinal = { y: this.corazon.position.y + 40 };
 
-        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 500)
-            .easing(TWEEN.Easing.Linear.None)
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 4000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(() => {
                 this.corazon.position.y = rotacion.y;
             }).onComplete(() => {
-                this.corazon.scale.set(2, 2, 2);
+                this.corazon.scale.set(1, 1, 1);
+            });
+
+        movimiento.start();
+    }
+
+    explotaCorazon() {
+        let rotacion = { scale: 1 };
+        let rotacionFinal = { scale: 0.05 };
+
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 7000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                this.corazon.scale.set(rotacion.scale, rotacion.scale, rotacion.scale)
+            }).onComplete(() => {
+                this.remove(this.corazon);
             });
 
         movimiento.start();
