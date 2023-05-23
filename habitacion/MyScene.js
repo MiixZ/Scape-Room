@@ -217,14 +217,6 @@ class MyScene extends THREE.Scene {
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
 
-        this.spotLight = new THREE.SpotLight(0xffffff, 0.1);
-        this.spotLight.position.set(this.WidthH / 2, this.HeightH, this.DepthH / 2);
-        this.spotLight.target = this.model.puerta;
-
-        this.spotLight2 = new THREE.SpotLight(0xffffff, 0.05);
-        this.spotLight2.position.set(-this.WidthH / 2, this.HeightH, -this.DepthH / 2);
-        this.spotLight2.target = this.lampara;
-
         this.LightMesa = new THREE.SpotLight(0xff0055, 0.6);
         this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
         this.LightMesa.target = this.mesa;
