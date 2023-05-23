@@ -1,21 +1,20 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
 import { Corazon } from '../corazon/Corazon.js';
+import * as TWEEN from "../libs/tween.esm.js";
 
 class jarron extends THREE.Object3D {
     jarron;
     constructor() {
         super();
 
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-
         // Construcción del Mesh
         this.jarron = this.createJarron();
 
         // Y añadirlo como hijo del Object3D (el this)
         this.corazon = new Corazon();
-        this.corazon.position.y = 30;
+        this.corazon.scale.set(0.5, 0.5, 0.5);
+        this.corazon.position.y = 10;
         this.add(this.corazon);
         this.add(this.jarron);
     }
@@ -38,10 +37,27 @@ class jarron extends THREE.Object3D {
 
         csg.subtract([esfera2Mesh, esfera3Mesh]);  // Entre corchetes porque tiene que iterar un array.
         csg.subtract([esfera1Mesh]);
+        csg.name = "jarron";
         return csg.toMesh();
     }
 
+    animacionCorazon() {
+        let rotacion = {y: 0};
+        let rotacionFinal = {y: 20};
+
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 500)
+            .easing(TWEEN.Easing.Linear.None)
+            .onUpdate(() => {
+                this.corazon.position.y = rotacion.y;
+            }).onComplete(() => {
+                this.corazon.scale.set(2, 2, 2);
+            });
+
+        movimiento.start();
+    }
+
     update() {
+        TWEEN.update();
         this.corazon.update();
     }
 }
