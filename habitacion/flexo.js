@@ -190,11 +190,6 @@ class flexo extends THREE.Object3D {
     }
 
     update() {
-        /*this.cuelloFlexo.translateY(-12.5);
-        this.cuelloFlexo.rotateX(Math.PI/4);
-        this.cuelloFlexo.rotateZ(0.02);
-        this.cuelloFlexo.rotateX(-Math.PI/4);
-        this.cuelloFlexo.translateY(12.5);*/
         TWEEN.update();
 
         this.animacion();
