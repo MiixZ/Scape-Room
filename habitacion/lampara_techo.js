@@ -41,7 +41,7 @@ class lamparastecho extends THREE.Object3D {
         palo.position.y = -12.5;
         this.bombilla.position.y = -39;
 
-        this.light = new THREE.SpotLight(0xffffff, 0.3);
+        this.light = new THREE.SpotLight(0xffffff, 0.6);
         this.light.target = foco;
         this.light.angle = Math.PI/3;
         this.light.penumbra = 0.6;
