@@ -1,21 +1,21 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
 import { Corazon } from '../corazon/Corazon.js';
+import * as TWEEN from "../libs/tween.esm.js";
 
 class jarron extends THREE.Object3D {
     jarron;
     constructor() {
         super();
 
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-
         // Construcción del Mesh
         this.jarron = this.createJarron();
+        this.jarron.name = "jarron";
 
         // Y añadirlo como hijo del Object3D (el this)
         this.corazon = new Corazon();
-        this.corazon.position.y = 30;
+        this.corazon.scale.set(0.5, 0.5, 0.5);
+        this.corazon.position.y = 10;
         this.add(this.corazon);
         this.add(this.jarron);
     }
@@ -41,7 +41,38 @@ class jarron extends THREE.Object3D {
         return csg.toMesh();
     }
 
+    animacionCorazon() {
+        let rotacion = { y: this.corazon.position.y };
+        let rotacionFinal = { y: this.corazon.position.y + 40 };
+
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 4000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                this.corazon.position.y = rotacion.y;
+            }).onComplete(() => {
+                this.corazon.scale.set(1, 1, 1);
+            });
+
+        movimiento.start();
+    }
+
+    explotaCorazon() {
+        let rotacion = { scale: 1 };
+        let rotacionFinal = { scale: 0.05 };
+
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 7000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(() => {
+                this.corazon.scale.set(rotacion.scale, rotacion.scale, rotacion.scale)
+            }).onComplete(() => {
+                this.remove(this.corazon);
+            });
+
+        movimiento.start();
+    }
+
     update() {
+        TWEEN.update();
         this.corazon.update();
     }
 }

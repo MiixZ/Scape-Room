@@ -1,24 +1,21 @@
 // Clases de la biblioteca
 
 import * as THREE from '../libs/three.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
-import { Stats } from '../libs/stats.module.js'
-import { PointerLockControls } from '../libs/PointerLockControls.js';
+import {MeshPhongMaterial} from '../libs/three.module.js'
+import {Stats} from '../libs/stats.module.js'
+import {PointerLockControls} from '../libs/PointerLockControls.js';
 import * as TWEEN from '../libs/tween.esm.js';
 
 
 // Clases de nuestro proyecto
-
-import { mesa } from '../mesa/mesa.js'
-import { habitacion } from './habitacion.js'
-import { Corazon } from '../corazon/Corazon.js'
-import { lampara } from './lampara.js'
-import { foco } from './foco.js'
-import { cama } from './cama.js';
-import { MeshPhongMaterial } from "../libs/three.module.js";
-import { candado } from "./candado.js";
+import {mesa} from '../mesa/mesa.js'
+import {habitacion} from './habitacion.js'
+import {lampara} from './lampara.js'
+import {foco} from './foco.js'
+import {cama} from './cama.js';
 import {flexo} from "./flexo.js";
-import { Globo } from '../globo/globo.js';
+import {Globo} from '../globo/globo.js';
+import {lamparastecho} from "./lampara_techo.js";
 
 
 /// La clase fachada del modelo
@@ -73,18 +70,16 @@ class MyScene extends THREE.Scene {
         this.pickeableObjects.push(this.model.getObjectByName("pared4"));
 
         this.mesa = new mesa();
+        this.mesa.name = "mesa";
         this.mesa.position.x = this.WidthH / 2 - 50;
 
         this.mesa.jarronMesa.position.z = 0;
         this.mesa.jarronMesa.position.x= 10;
+        this.pickeableObjects.push(this.mesa.jarronMesa);
         this.add(this.mesa);
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
         this.candidates.push(cajaMesa);
 
-        /*this.corazon = new Corazon();
-        this.corazon.position.x = this.WidthH / 2 - 45;
-        this.corazon.position.y = this.HeightH / 3.5;
-        this.add(this.corazon);*/
         this.pickeableObjects.push(this.mesa.jarronMesa.corazon);
 
         this.lampara = new lampara();
@@ -110,16 +105,17 @@ class MyScene extends THREE.Scene {
         this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
         this.add(this.flexo);
 
+        this.createTablon();
+
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
         this.globo.rotateY(-Math.PI/2);
         this.add(this.globo);
 
-        this.candado = new candado();
-        this.add(this.candado);
-        this.candado.position.set()
-
-        console.log(this.candidates);
+        this.lamparastecho = new lamparastecho();
+        this.lamparastecho.lampara1.position.y = this.HeightH - 30;
+        this.lamparastecho.lampara2.position.y = this.HeightH - 30;
+        this.add(this.lamparastecho);
 
         this.createLights();
         this.createBody();
@@ -163,7 +159,6 @@ class MyScene extends THREE.Scene {
         boxMaterial.transparent = true;
         this.body = new THREE.Mesh(boxGeometry, boxMaterial);
         this.body.position.set(-300, 0, -20);
-
 
         this.add(this.body);
     }
@@ -231,7 +226,19 @@ class MyScene extends THREE.Scene {
         this.LightMesa.target = this.mesa;
         this.LightMesa.penumbra = 0.5;
 
-        this.add(this.spotLight, this.LightMesa, this.spotLight2);
+        this.add(this.LightMesa);
+    }
+
+    createTablon() {
+        var tablonGeometry = new THREE.BoxGeometry(200, 150, 5, 100, 100);
+        var texture = new THREE.TextureLoader().load('../imgs/cabecera_8.jpg');
+        var tablonMaterial = new MeshPhongMaterial({ map: texture });
+
+        this.tablon = new THREE.Mesh(tablonGeometry, tablonMaterial);
+        this.tablon.position.z = -147;
+        this.tablon.position.y = 75;
+        this.tablon.position.x = -273;
+        this.add(this.tablon);
     }
 
     createRenderer(myCanvas) {
@@ -343,8 +350,11 @@ class MyScene extends THREE.Scene {
             } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
                 this.controlLamp();
+            } else if (selectedObject.name === "jarron" && distance < 350) {
+                this.mesa.jarronMesa.animacionCorazon();
             } else if(selectedObject.name === "corazon" && distance < 350) {
                 this.globo.animacion();
+                this.mesa.jarronMesa.explotaCorazon();
             }
         }
     }
@@ -365,16 +375,14 @@ class MyScene extends THREE.Scene {
             let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve_5.jpg');
             let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
 
-            let newMaterial = new THREE.MeshPhongMaterial({ map: textureAux, bumpMap: textureBump, bumpScale: 1 });
-            this.pared3.material = newMaterial;
+            this.pared3.material = new THREE.MeshPhongMaterial({map: textureAux, bumpMap: textureBump, bumpScale: 1});
             this.pared3.geometry.uvsNeedUpdate = true;
             this.add(this.lampara1Light);
         } else {
             let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve.jpg');
             let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
 
-            let newMaterial = new THREE.MeshPhongMaterial({ map: textureAux, bumpMap: textureBump, bumpScale: 1 });
-            this.pared3.material = newMaterial;
+            this.pared3.material = new THREE.MeshPhongMaterial({map: textureAux, bumpMap: textureBump, bumpScale: 1});
             this.pared3.geometry.uvsNeedUpdate = true;
             this.remove(this.lampara1Light);
         }
@@ -404,6 +412,7 @@ class MyScene extends THREE.Scene {
         this.model.update();
         this.flexo.update();
         this.mesa.update();
+        this.lamparastecho.update();
 
         this.changeBodyPosition();
         this.checkColisiones();

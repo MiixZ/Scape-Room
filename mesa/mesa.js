@@ -8,42 +8,12 @@ class mesa extends THREE.Object3D {
     pata3;
     pata4;
     superficie;
-    jarronMesa;
     mesaWidth = 100;
     mesaHeight = 60;
     mesaDepth = 260;
 
     constructor() {
         super();
-
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-
-       /* // ----------------------------- CILINDRO 1 -------------------------------------------
-        // Un Mesh se compone de geometría y material.
-        // radialSegment (quinto parámetro: número de revoluciones).
-        // heightSegment (sexto parámetro: número de extrusiones).
-        var cilindroGeom = new THREE.CylinderGeometry(1, 1, 4);
-        // Como material se crea uno a partir de un color
-        var cilindroMaterial = new THREE.MeshPhongMaterial({color: 0x008000});
-
-        // ----------------------------- CILINDRO 2 -------------------------------------------
-        // Un Mesh se compone de geometría y material
-        var cilindroGeom2 = new THREE.CylinderGeometry(1, 1, 4);
-        // Como material se crea uno a partir de un color.
-        var cilindroMaterial2 = new THREE.MeshPhongMaterial({color: 0x008000});
-
-        // ----------------------------- CILINDRO 3 -------------------------------------------
-        // Un Mesh se compone de geometría y material
-        var cilindroGeom3 = new THREE.CylinderGeometry(1, 1, 4);
-        // Como material se crea uno a partir de un color
-        var cilindroMaterial3 = new THREE.MeshPhongMaterial({color: 0x008000});
-
-        // ----------------------------- CILINDRO 4 -------------------------------------------
-        // Un Mesh se compone de geometría y material
-        var cilindroGeom4 = new THREE.CylinderGeometry(1, 1, 4);
-        // Como material se crea uno a partir de un color
-        var cilindroMaterial4 = new THREE.MeshPhongMaterial({color: 0x008000});*/
 
         // Construcción del Mesh
         this.pata = this.createCilindro();
@@ -52,6 +22,7 @@ class mesa extends THREE.Object3D {
         this.pata4 = this.createCilindro();
         this.superficie = this.createCuadrado();
         this.jarronMesa = new jarron();
+        this.jarronMesa.name = "jarron";
 
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.pata);
@@ -106,7 +77,7 @@ class mesa extends THREE.Object3D {
     }
 
     update () {
-        this.jarronMesa.update()    ;
+        this.jarronMesa.update();
     }
 }
 
