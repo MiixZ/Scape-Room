@@ -57,6 +57,7 @@ class MyScene extends THREE.Scene {
         this.candidates = [];
         this.model = new habitacion();
         this.add(this.model);
+        this.pickeableObjects.push(this.model.candado);
 
         let numParedes = 4;
         for (let i = 1; i <= numParedes; i++) {
@@ -108,8 +109,6 @@ class MyScene extends THREE.Scene {
         this.flexo = new flexo();
         this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
         this.add(this.flexo);
-
-        this.createTablon();
 
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
@@ -225,18 +224,6 @@ class MyScene extends THREE.Scene {
         this.add(this.LightMesa);
     }
 
-    createTablon() {
-        var tablonGeometry = new THREE.BoxGeometry(200, 150, 5, 100, 100);
-        var texture = new THREE.TextureLoader().load('../imgs/cabecera_8.jpg');
-        var tablonMaterial = new MeshPhongMaterial({ map: texture });
-
-        this.tablon = new THREE.Mesh(tablonGeometry, tablonMaterial);
-        this.tablon.position.z = -147;
-        this.tablon.position.y = 75;
-        this.tablon.position.x = -273;
-        this.add(this.tablon);
-    }
-
     createRenderer(myCanvas) {
         // Se recibe el lienzo sobre el que se van a hacer los renderizados. Un div definido en el html.
 
@@ -278,31 +265,38 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    unlockCamera(){
+        this.CameraControl.unlock();
+    }
+    lockCamera(){
+        this.CameraControl.lock();
+    }
+
     mover(evento) {
-        switch (evento.key) {
-            case 'w':
-                this.zdir = 1;
-                break;
+            switch (evento.key) {
+                case 'w':
+                    this.zdir = 1;
+                    break;
 
-            case 's':
-                this.zdir = -1;
-                break;
+                case 's':
+                    this.zdir = -1;
+                    break;
 
-            case 'a':
-                this.xdir = -1;
-                break;
+                case 'a':
+                    this.xdir = -1;
+                    break;
 
-            case 'd':
-                this.xdir = 1;
-                break;
+                case 'd':
+                    this.xdir = 1;
+                    break;
 
-            case 'Enter':
-                this.CameraControl.lock();
-                break;
+                case 'Enter':
+                    this.CameraControl.lock();
+                    break;
 
-            default:
-                break;
-        }
+                default:
+                    break;
+            }
     }
 
     parar(evento) {
@@ -343,6 +337,8 @@ class MyScene extends THREE.Scene {
             let distance = pickedObjects[0].distance;
             if (selectedObject.name === "pomo" && distance < 350) {
                 this.showAlert("Parece que la puerta está cerrada...");
+            }else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
+                this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
                 this.mostrarContenedorClave();
             } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                 this.lamparaControl = !this.lamparaControl;
@@ -399,10 +395,14 @@ class MyScene extends THREE.Scene {
         }
         document.getElementById("contenedor").style.display = "none";
         document.getElementById("puntero").style.display = "flex";
+        this.panelClave = false;
+        this.lockCamera();
 
     }
 
     mostrarContenedorClave(){
+        this.panelClave = true;
+        this.unlockCamera();
         document.getElementById("contenedor").style.display = "flex";
         document.getElementById("puntero").style.display = "none";
         document.getElementById("num1").value = "";

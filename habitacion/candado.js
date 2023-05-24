@@ -23,6 +23,9 @@ class candado extends THREE.Object3D {
         let candadoMesh = new THREE.Mesh(cuerpo, this.materialMarron);
         let toroMesh = new THREE.Mesh(toro, this.materialPlateado);
 
+        toroMesh.name = "candado";
+        candadoMesh.name = "candado";
+
         candadoMesh.translateY(3.5);
         toroMesh.translateY(9);
         candadoMesh.scale.set(2, 1, 1);
