@@ -143,7 +143,7 @@ class habitacion extends THREE.Object3D {
         let rotacion = {z:0};
         let rotacionFinal = {z: Math.PI /2};
 
-        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 3000)
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 2000)
             .easing(TWEEN.Easing.Quadratic.In)
             .onUpdate(() => {
                 this.puerta.rotation.y = -rotacion.z;
