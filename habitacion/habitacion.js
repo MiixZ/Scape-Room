@@ -1,6 +1,7 @@
 import * as THREE from '../libs/three.module.js'
-import * as CSG from '../libs/CSG-v2.js'
 import {candado} from "./candado.js";
+import * as TWEEN from '../libs/tween.esm.js';
+import {Object3D} from "../libs/three.module.js";
 
 class habitacion extends THREE.Object3D {
     WidthH = 750;
@@ -27,9 +28,9 @@ class habitacion extends THREE.Object3D {
         this.puerta.position.y = this.puertaHeight / 2;
         this.puerta.position.z = -this.DepthH / 2;
 
-        this.createPomo();
-
         this.add(this.puerta);
+
+        this.animacionAbrir();
     }
 
     createParedes() {
@@ -100,15 +101,23 @@ class habitacion extends THREE.Object3D {
     }
 
     createPuerta() {
+        var vacio = new Object3D();
+        vacio.position.x = this.puertaWidth / 2;
         var geometryPuerta = new THREE.BoxGeometry(this.puertaWidth, this.puertaHeight, 15);
         var texture = new THREE.TextureLoader().load('../imgs/puerta.jpg');
         var materialPuerta = new THREE.MeshPhongMaterial({map: texture});
 
-        return new THREE.Mesh(geometryPuerta, materialPuerta);
+        var puerta = new THREE.Mesh(geometryPuerta, materialPuerta);
+        puerta.position.set(-this.puertaWidth / 2, 0, 0);
+        vacio.add(puerta);
+
+        this.createPomo(puerta);
+
+        return vacio;
     }
 
-    createPomo() {
-        var geometryApoyo = new THREE.CylinderGeometry(2.5, 2.5, 5, 100, 100);
+    createPomo(puerta) {
+        var geometryApoyo = new THREE.CylinderGeometry(2.5, 2.5, 7, 100, 100);
         var geometryPomo = new THREE.SphereGeometry(3.75, 100, 100);
         var material = new THREE.MeshPhongMaterial({color: 0xfffaaa});
 
@@ -123,15 +132,28 @@ class habitacion extends THREE.Object3D {
 
         PomoMesh.add(this.candado);
 
-        ApoyoMesh.position.z = 10;
-        PomoMesh.position.z = 10;
+        ApoyoMesh.position.z = 8.5;
+        PomoMesh.position.z = 8;
 
         PomoMesh.name = "pomo";
-        this.puerta.add(ApoyoMesh, PomoMesh);
+        puerta.add(ApoyoMesh, PomoMesh);
+    }
+
+    animacionAbrir() {
+        let rotacion = {z:0};
+        let rotacionFinal = {z: Math.PI /2};
+
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 2000)
+            .easing(TWEEN.Easing.Linear.None)
+            .onUpdate(() => {
+                this.puerta.rotation.y = rotacion.z;
+            });
+
+        movimiento.start();
     }
 
     update() {
-
+        TWEEN.update();
     }
 }
 
