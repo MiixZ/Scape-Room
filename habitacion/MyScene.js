@@ -32,6 +32,7 @@ class MyScene extends THREE.Scene {
 
     doorUnlocked = false;
     panelClave = false;
+    afterPanel = false;
 
     constructor(myCanvas) {
         super();
@@ -79,7 +80,7 @@ class MyScene extends THREE.Scene {
         this.mesa.position.x = this.WidthH / 2 - 50;
 
         this.mesa.jarronMesa.position.z = 0;
-        this.mesa.jarronMesa.position.x= 10;
+        this.mesa.jarronMesa.position.x = 10;
         this.pickeableObjects.push(this.mesa.jarronMesa);
         this.add(this.mesa);
         let cajaMesa = new THREE.Box3().setFromObject(this.mesa);
@@ -112,7 +113,7 @@ class MyScene extends THREE.Scene {
 
         this.globo = new Globo();
         this.globo.position.set(this.WidthH / 2 - 30, 62, 80);
-        this.globo.rotateY(-Math.PI/2);
+        this.globo.rotateY(-Math.PI / 2);
         this.add(this.globo);
 
         this.lamparastecho = new lamparastecho();
@@ -144,8 +145,10 @@ class MyScene extends THREE.Scene {
         this.camera.position.set(0, this.cameraHeight, -20);
         this.CameraControl = new PointerLockControls(this.camera, this.renderer.domElement);
 
-        this.xdir = 0; this.zdir = 0;
-        this.tiempoI = Date.now(); this.velocidad = 500;
+        this.xdir = 0;
+        this.zdir = 0;
+        this.tiempoI = Date.now();
+        this.velocidad = 500;
 
         this.add(this.camera);
     }
@@ -265,14 +268,16 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    unlockCamera(){
+    unlockCamera() {
         this.CameraControl.unlock();
     }
-    lockCamera(){
+
+    lockCamera() {
         this.CameraControl.lock();
     }
 
     mover(evento) {
+        if (!this.panelClave) {
             switch (evento.key) {
                 case 'w':
                     this.zdir = 1;
@@ -297,6 +302,8 @@ class MyScene extends THREE.Scene {
                 default:
                     break;
             }
+        }
+
     }
 
     parar(evento) {
@@ -317,38 +324,51 @@ class MyScene extends THREE.Scene {
     }
 
     pick(event) {
-        let ray = new THREE.Raycaster();
-        let center = new THREE.Vector2();
-        // Calcula las coordenadas del centro
-        center.x = window.innerWidth / 2;
-        center.y = window.innerHeight / 2;
 
-        // Normaliza las coordenadas al rango [-1, 1]
-        center.x = (center.x / window.innerWidth) * 2 - 1;
-        center.y = 1 - (center.y / window.innerHeight) * 2;
+        if(!this.panelClave && !this.afterPanel){
 
-        ray.setFromCamera(center, this.camera);
+            let ray = new THREE.Raycaster();
+            let center = new THREE.Vector2();
+            // Calcula las coordenadas del centro
+            center.x = window.innerWidth / 2;
+            center.y = window.innerHeight / 2;
 
-        let pickedObjects = ray.intersectObjects(this.pickeableObjects, true);
+            // Normaliza las coordenadas al rango [-1, 1]
+            center.x = (center.x / window.innerWidth) * 2 - 1;
+            center.y = 1 - (center.y / window.innerHeight) * 2;
 
-        if (pickedObjects.length > 0) {
-            let selectedObject = pickedObjects[0].object;
-            //let selectedPoint = pickedObjects[0].point;
-            let distance = pickedObjects[0].distance;
-            if (selectedObject.name === "pomo" && distance < 350) {
-                this.showAlert("Parece que la puerta está cerrada...");
-            }else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
-                this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
-                this.mostrarContenedorClave();
-            } else if (selectedObject.parent.name === "lampara" && distance < 350) {
-                this.lamparaControl = !this.lamparaControl;
-                this.controlLamp();
-            } else if (selectedObject.name === "jarron" && distance < 350) {
-                this.mesa.jarronMesa.animacionCorazon();
-            } else if(selectedObject.name === "corazon" && distance < 350) {
-                this.globo.animacion();
-                this.mesa.jarronMesa.explotaCorazon();
+            ray.setFromCamera(center, this.camera);
+
+            let pickedObjects = ray.intersectObjects(this.pickeableObjects, true);
+
+            if (pickedObjects.length > 0) {
+                let selectedObject = pickedObjects[0].object;
+                //let selectedPoint = pickedObjects[0].point;
+                let distance = pickedObjects[0].distance;
+                if (selectedObject.name === "pomo" && distance < 350) {
+                    if(!this.doorUnlocked) {
+                        this.showAlert("Parece que la puerta está cerrada...");
+                    } else {
+                        this.showAlert("La puerta se está abriendo");
+                    }
+
+                } else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
+                    this.panelClave = true;
+                    this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
+                    this.mostrarContenedorClave();
+                    // this.remove(this.candado);
+                } else if (selectedObject.parent.name === "lampara" && distance < 350) {
+                    this.lamparaControl = !this.lamparaControl;
+                    this.controlLamp();
+                } else if (selectedObject.name === "jarron" && distance < 350) {
+                    this.mesa.jarronMesa.animacionCorazon();
+                } else if (selectedObject.name === "corazon" && distance < 350) {
+                    this.globo.animacion();
+                    this.mesa.jarronMesa.explotaCorazon();
+                }
             }
+        } else if(this.afterPanel){
+            this.afterPanel = false;
         }
     }
 
@@ -396,11 +416,12 @@ class MyScene extends THREE.Scene {
         document.getElementById("contenedor").style.display = "none";
         document.getElementById("puntero").style.display = "flex";
         this.panelClave = false;
+        this.afterPanel = true;
         this.lockCamera();
 
     }
 
-    mostrarContenedorClave(){
+    mostrarContenedorClave() {
         this.panelClave = true;
         this.unlockCamera();
         document.getElementById("contenedor").style.display = "flex";
