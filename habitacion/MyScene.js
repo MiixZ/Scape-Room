@@ -131,6 +131,8 @@ class MyScene extends THREE.Scene {
 
         let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
         this.candidates.push(cajaPuerta);
+
+        console.log(this.pickeableObjects);
     }
 
     initStats() {
@@ -160,7 +162,11 @@ class MyScene extends THREE.Scene {
 
         this.caja3 = new caja();
         this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
-        this.add(this.caja3);           // Caja random.
+        this.caja2.name = "caja";
+        this.pickeableObjects.push(this.caja2);
+        this.add(this.caja3);// Caja random.
+
+
     }
 
     createCamera() {
@@ -368,6 +374,8 @@ class MyScene extends THREE.Scene {
                 let selectedObject = pickedObjects[0].object;
                 //let selectedPoint = pickedObjects[0].point;
                 let distance = pickedObjects[0].distance;
+                console.log("seleccionado: ")
+                console.log(selectedObject);
                 if (selectedObject.name === "pomo" && distance < 350) {
                     if(!this.doorUnlocked) {
                         this.showAlert("Parece que la puerta está cerrada...");
@@ -392,6 +400,7 @@ class MyScene extends THREE.Scene {
                     this.globo.animacion();
                     this.mesa.jarronMesa.explotaCorazon();
                 } else if (selectedObject.name === "caja" && distance < 350) {
+                    console.log("caja si o si");
                     this.caja3.luminosidadCaja();
                 }
             }
