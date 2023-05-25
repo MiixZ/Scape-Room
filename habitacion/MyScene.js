@@ -16,6 +16,7 @@ import {cama} from './cama.js';
 import {flexo} from "./flexo.js";
 import {Globo} from '../globo/globo.js';
 import {lamparastecho} from "./lampara_techo.js";
+import {caja} from "./caja.js";
 
 
 /// La clase fachada del modelo
@@ -121,6 +122,8 @@ class MyScene extends THREE.Scene {
         this.lamparastecho.lampara2.position.y = this.HeightH - 30;
         this.add(this.lamparastecho);
 
+        this.createCajas();
+
         this.createLights();
         this.createBody();
     }
@@ -138,6 +141,21 @@ class MyScene extends THREE.Scene {
         $("#Stats-output").append(stats.domElement);
 
         this.stats = stats;
+    }
+
+    createCajas() {
+        this.caja = new caja();
+        this.caja.position.set(-this.WidthH / 2 + 100, 95, 0);
+        this.add(this.caja);            // Caja de la cama.
+
+        this.caja2 = new caja();
+        this.caja2.scale.set(2, 2, 2);
+        this.caja2.position.set(-this.WidthH / 2 + 100, 50, -200);
+        this.add(this.caja2);           // Caja que tapa el número.
+
+        this.caja3 = new caja();
+        this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
+        this.add(this.caja3);           // Caja random.
     }
 
     createCamera() {

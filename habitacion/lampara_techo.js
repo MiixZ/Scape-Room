@@ -54,10 +54,10 @@ class lamparastecho extends THREE.Object3D {
     }
 
     animacion () {
-        let rotacion = {z: this.DepthH / 2 - 15};
-        let rotacionFinal = {z: -this.DepthH / 2 + 15};
-        let rotacion2 = {z: -this.DepthH / 2 + 15};
-        let rotacionFinal2 = {z: this.DepthH / 2 - 15};
+        let rotacion = {z: this.DepthH / 2 - 25};
+        let rotacionFinal = {z: -this.DepthH / 2 + 25};
+        let rotacion2 = {z: -this.DepthH / 2 + 25};
+        let rotacionFinal2 = {z: this.DepthH / 2 - 25};
 
         let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 20000)
             .easing(TWEEN.Easing.Linear.None)

@@ -92,11 +92,11 @@ class habitacion extends THREE.Object3D {
         var techo = new THREE.Mesh(geometryGround, materialTecho) ;
 
         // Todas las figuras se crean centradas en el origen.
-        // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
+        // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior.
         ground.position.y = -0.1;
         techo.position.y = this.HeightH;
 
-        // Que no se nos olvide añadirlo a la escena, que en este caso es  this
+        // Que no se nos olvide añadirlo a la escena, que en este caso es  this.
         this.add(ground, techo);
     }
 
@@ -143,10 +143,10 @@ class habitacion extends THREE.Object3D {
         let rotacion = {z:0};
         let rotacionFinal = {z: Math.PI /2};
 
-        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 2000)
-            .easing(TWEEN.Easing.Linear.None)
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 3000)
+            .easing(TWEEN.Easing.Quadratic.In)
             .onUpdate(() => {
-                this.puerta.rotation.y = rotacion.z;
+                this.puerta.rotation.y = -rotacion.z;
             });
 
         movimiento.start();
