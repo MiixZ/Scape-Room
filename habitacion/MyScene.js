@@ -18,8 +18,6 @@ import {Globo} from '../globo/globo.js';
 import {lamparastecho} from "./lampara_techo.js";
 import {caja} from "./caja.js";
 
-
-
 /// La clase fachada del modelo
 /**
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
@@ -73,8 +71,6 @@ class MyScene extends THREE.Scene {
             this.candidates.push(cajaHabitacion);
         }
 
-
-
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
         this.pickeableObjects.push(this.model.getObjectByName("pared4"));
 
@@ -101,6 +97,17 @@ class MyScene extends THREE.Scene {
 
         this.candidates.push(cajaLampara);
         this.pickeableObjects.push(this.lampara);
+
+        this.lampara2 = new lampara();
+        this.lampara2.position.z = -this.DepthH / 2 + this.lampara2.RadiusBase;
+        this.lampara2.position.x = -this.WidthH / 2 + this.lampara2.RadiusBase;
+        this.lampara2.name = "lampara2";
+        this.add(this.lampara2);
+        this.lampara2Control = false;
+        let cajaLampara2 = new THREE.Box3().setFromObject(this.lampara2);
+
+        this.candidates.push(cajaLampara2);
+        this.pickeableObjects.push(this.lampara2);
 
         this.foco = new foco();
         this.foco.position.y = this.HeightH - 50;
@@ -158,15 +165,13 @@ class MyScene extends THREE.Scene {
         this.caja2 = new caja();
         this.caja2.scale.set(2, 2, 2);
         this.caja2.position.set(-this.WidthH / 2 + 100, 50, -200);
+        this.caja2.name = "caja";
+        this.pickeableObjects.push(this.caja2);
         this.add(this.caja2);           // Caja que tapa el número.
 
         this.caja3 = new caja();
         this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
-        this.caja2.name = "caja";
-        this.pickeableObjects.push(this.caja2);
         this.add(this.caja3);// Caja random.
-
-
     }
 
     createCamera() {
@@ -247,6 +252,12 @@ class MyScene extends THREE.Scene {
             this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
+
+        this.lampara2Light = new THREE.SpotLight(0x03FA15, 1);
+        this.lampara2Light.position.set(this.lampara2.position.x, this.lampara2.cabeza.position.y,
+            this.lampara2.position.z);
+        this.lampara2Light.target = this.lampara2;
+        this.lampara2Light.penumbra = 1;
 
         this.LightMesa = new THREE.SpotLight(0xff0055, 0.6);
         this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
@@ -353,7 +364,6 @@ class MyScene extends THREE.Scene {
     }
 
     pick(event) {
-
         if(!this.panelClave && !this.afterPanel){
 
             let ray = new THREE.Raycaster();
@@ -382,9 +392,7 @@ class MyScene extends THREE.Scene {
                     } else {
                         this.model.animacionAbrir();
                         this.showAlert("La puerta se está abriendo");
-
                     }
-
                 } else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
                     this.panelClave = true;
                     this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
@@ -399,9 +407,17 @@ class MyScene extends THREE.Scene {
                 } else if (selectedObject.name === "corazon" && distance < 350) {
                     this.globo.animacion();
                     this.mesa.jarronMesa.explotaCorazon();
-                } else if (selectedObject.name === "caja" && distance < 350) {
+                } else if (selectedObject.name === "" && distance < 350) {
                     console.log("caja si o si");
-                    this.caja3.luminosidadCaja();
+                    this.caja2.luminosidadCaja();
+                } else if(selectedObject.name === "lampara2" && distance < 350){
+                    this.lampara2Control = !this.lampara2Control;
+
+                    if(this.lampara2Control){
+                        this.add(this.lampara2Light);
+                    } else {
+                        this.remove(this.lampara2Light);
+                    }
                 }
             }
         } else if(this.afterPanel){
@@ -436,7 +452,6 @@ class MyScene extends THREE.Scene {
             this.pared3.geometry.uvsNeedUpdate = true;
             this.remove(this.lampara1Light);
         }
-
     }
 
     comprobarClave() {
@@ -456,7 +471,6 @@ class MyScene extends THREE.Scene {
         this.panelClave = false;
         this.afterPanel = true;
         this.lockCamera();
-
     }
 
     mostrarContenedorClave() {

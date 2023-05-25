@@ -18,6 +18,7 @@ class caja extends THREE.Object3D {
 
         var texture = new THREE.TextureLoader().load('../imgs/caja.jpg');
         this.cajaMaterial = new THREE.MeshPhongMaterial({map: texture, transparent: true});
+        this.cajaMaterial.needUpdate = true;
         this.caja = new THREE.Mesh(cajaGeometry, this.cajaMaterial);
 
         this.add(this.caja);
@@ -27,7 +28,7 @@ class caja extends THREE.Object3D {
         let rotacion = {z:1};
         let rotacionFinal = {z:0.2};
 
-        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 20000)
+        let movimiento = new TWEEN.Tween(rotacion).to(rotacionFinal, 8000)
             .easing(TWEEN.Easing.Linear.None)
             .onUpdate(() => {
                 this.cajaMaterial.opacity = rotacion.z;
