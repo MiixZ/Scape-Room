@@ -407,10 +407,10 @@ class MyScene extends THREE.Scene {
                 } else if (selectedObject.name === "corazon" && distance < 350) {
                     this.globo.animacion();
                     this.mesa.jarronMesa.explotaCorazon();
-                } else if (selectedObject.name === "" && distance < 350) {
+                } else if (selectedObject.parent.name === "caja" && distance < 350) {
                     console.log("caja si o si");
                     this.caja2.luminosidadCaja();
-                } else if(selectedObject.name === "lampara2" && distance < 350){
+                } else if(selectedObject.parent.name === "lampara2" && distance < 350){
                     this.lampara2Control = !this.lampara2Control;
 
                     if(this.lampara2Control){
