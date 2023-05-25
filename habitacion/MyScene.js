@@ -19,6 +19,7 @@ import {lamparastecho} from "./lampara_techo.js";
 import {caja} from "./caja.js";
 
 
+
 /// La clase fachada del modelo
 /**
  * Usaremos una clase derivada de la clase Scene de Three.js para llevar el control de la escena y de todo lo que ocurre en ella.
@@ -34,6 +35,7 @@ class MyScene extends THREE.Scene {
     doorUnlocked = false;
     panelClave = false;
     afterPanel = false;
+    cajaPuertaAdd = false;
 
     constructor(myCanvas) {
         super();
@@ -61,7 +63,7 @@ class MyScene extends THREE.Scene {
         this.add(this.model);
         this.pickeableObjects.push(this.model.candado);
 
-        let numParedes = 4;
+        let numParedes = 6;
         for (let i = 1; i <= numParedes; i++) {
             let name = "pared" + i.toString();
             if (i === 3) {
@@ -71,7 +73,7 @@ class MyScene extends THREE.Scene {
             this.candidates.push(cajaHabitacion);
         }
 
-        this.cajaHabitacion = new THREE.Box3().setFromObject(this.model);
+
 
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
         this.pickeableObjects.push(this.model.getObjectByName("pared4"));
@@ -126,6 +128,9 @@ class MyScene extends THREE.Scene {
 
         this.createLights();
         this.createBody();
+
+        let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
+        this.candidates.push(cajaPuerta);
     }
 
     initStats() {
@@ -367,7 +372,9 @@ class MyScene extends THREE.Scene {
                     if(!this.doorUnlocked) {
                         this.showAlert("Parece que la puerta está cerrada...");
                     } else {
+                        this.model.animacionAbrir();
                         this.showAlert("La puerta se está abriendo");
+
                     }
 
                 } else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
@@ -375,6 +382,7 @@ class MyScene extends THREE.Scene {
                     this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
                     this.mostrarContenedorClave();
                     // this.remove(this.candado);
+                    console.log(this.model.puerta);
                 } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                     this.lamparaControl = !this.lamparaControl;
                     this.controlLamp();
@@ -430,6 +438,7 @@ class MyScene extends THREE.Scene {
         if (num1 == 5 && num2 == 8 && num3 == 0) {
             this.doorUnlocked = true;
             this.showAlert("He encontrado la clave correcta");
+            this.model.deleteCandado = true;
         } else {
             this.showAlert("Parece que la clave no es correcta...");
         }
@@ -457,6 +466,10 @@ class MyScene extends THREE.Scene {
             let cajaCama = new THREE.Box3().setFromObject(this.cama);
             this.candidates.push(cajaCama);
             this.cajaAdd = true;
+        }
+        if (this.model.cajaPuerta.max.x !== -Infinity && !this.cajaPuertaAdd) {
+            console.log("caja puerta");
+            this.candidates.pop();
         }
         // console.log(this.cama.box);
         // Se actualizan los elementos de la escena para cada frame.

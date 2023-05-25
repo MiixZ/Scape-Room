@@ -9,7 +9,9 @@ class habitacion extends THREE.Object3D {
     DepthH = 1500;
     puertaHeight = 200;
     puertaWidth = 107;
-
+    deleteCandado = false;
+    cajaPuerta = new THREE.Box3();
+    pomoMesh = new Object3D();
     constructor() {
         super();
 
@@ -29,8 +31,6 @@ class habitacion extends THREE.Object3D {
         this.puerta.position.z = -this.DepthH / 2;
 
         this.add(this.puerta);
-
-        this.animacionAbrir();
     }
 
     createParedes() {
@@ -126,17 +126,19 @@ class habitacion extends THREE.Object3D {
         geometryPomo.translate(-2*this.puertaWidth / 5, 0, 5 + 1.25);
 
         var ApoyoMesh = new THREE.Mesh(geometryApoyo, material);
-        var PomoMesh = new THREE.Mesh(geometryPomo, material);
+        this.PomoMesh = new THREE.Mesh(geometryPomo, material);
         this.candado = new candado();
         this.candado.position.set(-2*this.puertaWidth / 5, -9,  1.25);
 
-        PomoMesh.add(this.candado);
+        puerta.add(this.candado);
 
         ApoyoMesh.position.z = 8.5;
-        PomoMesh.position.z = 8;
+        this.PomoMesh.position.z = 8;
 
-        PomoMesh.name = "pomo";
-        puerta.add(ApoyoMesh, PomoMesh);
+        this.candado.position.z = 8;
+
+        this.PomoMesh.name = "pomo";
+        puerta.add(ApoyoMesh, this.PomoMesh);
     }
 
     animacionAbrir() {
@@ -147,6 +149,9 @@ class habitacion extends THREE.Object3D {
             .easing(TWEEN.Easing.Quadratic.In)
             .onUpdate(() => {
                 this.puerta.rotation.y = -rotacion.z;
+            }).onComplete(() => {
+                this.cajaPuerta = new THREE.Box3().setFromObject(this);
+                console.log("fin");
             });
 
         movimiento.start();
@@ -154,6 +159,11 @@ class habitacion extends THREE.Object3D {
 
     update() {
         TWEEN.update();
+        if(this.deleteCandado) {
+            console.log(this.puerta);
+            this.puerta.children[0].remove(this.puerta.children[0].children[0]);
+            this.deleteCandado = false;
+        }
     }
 }
 
