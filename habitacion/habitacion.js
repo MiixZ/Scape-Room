@@ -1,13 +1,13 @@
 import * as THREE from '../libs/three.module.js'
 import * as CSG from '../libs/CSG-v2.js'
-import { candado } from "./candado.js";
+import {candado} from "./candado.js";
 
 class habitacion extends THREE.Object3D {
     WidthH = 750;
     HeightH = 325;
     DepthH = 1500;
     puertaHeight = 200;
-    puertaWidth = 100;
+    puertaWidth = 107;
 
     constructor() {
         super();
@@ -20,14 +20,25 @@ class habitacion extends THREE.Object3D {
         this.createGroundAndTecho();
 
         this.createParedes();
+
+        this.puerta = this.createPuerta();
+        this.puerta.name = "puerta";
+
+        this.puerta.position.y = this.puertaHeight / 2;
+        this.puerta.position.z = -this.DepthH / 2;
+
+        this.createPomo();
+
+        this.add(this.puerta);
     }
 
     createParedes() {
-        var pared1, pared2, pared3, pared4, puerta;
-        var csg = new CSG.CSG();
+        var pared1, pared2, pared3, pared4, pared5, pared6;
 
         var geometryPared = new THREE.BoxGeometry (0.2, this.HeightH, this.DepthH);
-        var geometryPared2 = new THREE.BoxGeometry (this.WidthH, this.HeightH, 0.2);
+        var geometryPared2 = new THREE.BoxGeometry (this.WidthH, this.HeightH, 10);
+        var geometryParedLaterales = new THREE.BoxGeometry (this.WidthH / 2 - this.puertaWidth / 2, this.HeightH, 10);
+        var geometryParedPuerta = new THREE.BoxGeometry (this.puertaWidth + 20, this.HeightH - this.puertaHeight, 9);
         var textureAux = new THREE.TextureLoader().load('../imgs/base_relieve.jpg');
         var textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
 
@@ -36,27 +47,25 @@ class habitacion extends THREE.Object3D {
         pared1 = new THREE.Mesh(geometryPared, materialPared);
         pared2 = new THREE.Mesh(geometryPared, materialPared);
         pared3 = new THREE.Mesh(geometryPared2, materialPared);
-        pared4 = new THREE.Mesh(geometryPared2, materialPared);
-        this.puerta = this.createPuerta();
-        this.createPomo();
-
-        this.puerta.position.set(0, -this.HeightH / 2 + this.puertaHeight / 2, 0);  // Que esté tocando el suelo.
-
-        pared4 = csg.subtract([pared4, this.puerta]).toMesh();
-
-        pared4.add(this.puerta);
+        pared4 = new THREE.Mesh(geometryParedLaterales, materialPared);
+        pared5 = new THREE.Mesh(geometryParedLaterales, materialPared);
+        pared6 = new THREE.Mesh(geometryParedPuerta, materialPared);
 
         pared1.name = "pared1";
         pared2.name = "pared2";
         pared3.name = "pared3";
         pared4.name = "pared4";
+        pared5.name = "pared5";
+        pared6.name = "pared6";
 
         pared1.position.set(-this.WidthH / 2, this.HeightH / 2, 0);
         pared2.position.set(this.WidthH / 2, this.HeightH / 2, 0);
         pared3.position.set(0, this.HeightH / 2, this.DepthH / 2);
-        pared4.position.set(0, this.HeightH / 2, -this.DepthH / 2);
+        pared4.position.set(this.DepthH / 7, this.HeightH / 2, -this.DepthH / 2);
+        pared5.position.set(-this.DepthH / 7, this.HeightH / 2, -this.DepthH / 2);
+        pared6.position.set(0, 2*this.HeightH - 2*this.puertaHeight + 12, -this.DepthH / 2);
 
-        this.add(pared1, pared2, pared3, pared4);
+        this.add(pared1, pared2, pared3, pared4, pared5, pared6);
     }
 
     createGroundAndTecho () {
@@ -91,13 +100,11 @@ class habitacion extends THREE.Object3D {
     }
 
     createPuerta() {
-        var geometryPuerta = new THREE.BoxGeometry(this.puertaWidth, this.puertaHeight, 0.2);
+        var geometryPuerta = new THREE.BoxGeometry(this.puertaWidth, this.puertaHeight, 15);
         var texture = new THREE.TextureLoader().load('../imgs/puerta.jpg');
         var materialPuerta = new THREE.MeshPhongMaterial({map: texture});
 
-        let puerta = new THREE.Mesh(geometryPuerta, materialPuerta);
-        puerta.name = "puerta";
-        return puerta;  
+        return new THREE.Mesh(geometryPuerta, materialPuerta);
     }
 
     createPomo() {
@@ -115,6 +122,9 @@ class habitacion extends THREE.Object3D {
         this.candado.position.set(-2*this.puertaWidth / 5, -9,  1.25);
 
         PomoMesh.add(this.candado);
+
+        ApoyoMesh.position.z = 10;
+        PomoMesh.position.z = 10;
 
         PomoMesh.name = "pomo";
         this.puerta.add(ApoyoMesh, PomoMesh);
