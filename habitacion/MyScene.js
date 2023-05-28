@@ -17,6 +17,7 @@ import {flexo} from "./flexo.js";
 import {Globo} from '../globo/globo.js';
 import {lamparastecho} from "./lampara_techo.js";
 import {caja} from "./caja.js";
+import {sillon} from "./sillon.js";
 
 /// La clase fachada del modelo
 /**
@@ -109,10 +110,24 @@ class MyScene extends THREE.Scene {
         this.candidates.push(cajaLampara2);
         this.pickeableObjects.push(this.lampara2);
 
+        this.lampara3 = new lampara();
+        this.lampara3.position.z = -this.DepthH / 2 + this.lampara3.RadiusBase;
+        this.lampara3.position.x = this.WidthH / 2 - this.lampara3.RadiusBase;
+        this.lampara3.name = "lampara3";
+        this.add(this.lampara3);
+        let cajaLampara3 = new THREE.Box3().setFromObject(this.lampara3);
+
+        this.candidates.push(cajaLampara3);
+
         this.foco = new foco();
         this.foco.position.y = this.HeightH - 50;
         this.foco.position.x = this.WidthH / 2 - 30;
         this.add(this.foco);
+
+        this.sillon = new sillon();
+        this.sillon.position.set(this.WidthH / 2 - 60, 0, -this.DepthH / 2 + 30);
+        this.sillon.rotateY(-Math.PI / 4);
+        this.add(this.sillon);
 
         this.cama = new cama();
         this.add(this.cama);
@@ -258,6 +273,14 @@ class MyScene extends THREE.Scene {
             this.lampara2.position.z);
         this.lampara2Light.target = this.lampara2;
         this.lampara2Light.penumbra = 1;
+
+        this.lampara3Light = new THREE.SpotLight(0x03FA15, 1);
+        this.lampara3Light.position.set(this.lampara3.position.x, this.lampara3.cabeza.position.y,
+            this.lampara3.position.z);
+        this.lampara3Light.target = this.lampara3;
+        this.lampara3Light.penumbra = 1;
+
+        this.add(this.lampara3Light);
 
         this.LightMesa = new THREE.SpotLight(0xff0055, 0.6);
         this.LightMesa.position.set(this.foco.position.x, this.foco.position.y, this.foco.position.z);
