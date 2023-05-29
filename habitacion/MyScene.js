@@ -37,7 +37,6 @@ class MyScene extends THREE.Scene {
     afterPanel = false;
     cajaPuertaAdd = false;
     sillonAdd = false;
-    boxIndex = -1;
     constructor(myCanvas) {
         super();
         this.pickeableObjects = [];
@@ -196,8 +195,6 @@ class MyScene extends THREE.Scene {
         this.caja2.name = "caja";
         this.pickeableObjects.push(this.caja2);
         this.add(this.caja2);           // Caja que tapa el número
-        this.candidates.push(new THREE.Box3().setFromObject(this.caja2));
-        this.boxIndex = this.candidates.length - 1;
 
 
         this.caja3 = new caja();
@@ -476,8 +473,6 @@ class MyScene extends THREE.Scene {
                     this.mesa.jarronMesa.explotaCorazon();
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
                     this.caja2.luminosidadCaja();
-                    //this.candidates.remove();
-                    this.candidates.splice(this.boxIndex);
                     console.log(this.candidates)
                 } else if(selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
