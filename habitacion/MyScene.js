@@ -36,7 +36,8 @@ class MyScene extends THREE.Scene {
     panelClave = false;
     afterPanel = false;
     cajaPuertaAdd = false;
-
+    sillonAdd = false;
+    boxIndex = -1;
     constructor(myCanvas) {
         super();
         this.pickeableObjects = [];
@@ -135,6 +136,7 @@ class MyScene extends THREE.Scene {
         this.linterna = new linterna();
         this.linterna.position.set(this.sillon.position.x - 45, this.sillon.position.y + 75, this.sillon.position.z + 75);
         this.linterna.rotateX(Math.PI);
+        this.linternaControl = true;
         this.pickeableObjects.push(this.linterna);
         this.add(this.linterna);
 
@@ -193,7 +195,10 @@ class MyScene extends THREE.Scene {
         this.caja2.position.set(-this.WidthH / 2 + 100, 50, -200);
         this.caja2.name = "caja";
         this.pickeableObjects.push(this.caja2);
-        this.add(this.caja2);           // Caja que tapa el número.
+        this.add(this.caja2);           // Caja que tapa el número
+        this.candidates.push(new THREE.Box3().setFromObject(this.caja2));
+        this.boxIndex = this.candidates.length - 1;
+
 
         this.caja3 = new caja();
         this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
@@ -425,7 +430,7 @@ class MyScene extends THREE.Scene {
         }
     }
 
-    pick(event) {
+    pick() {
         if(!this.panelClave && !this.afterPanel){
 
             let ray = new THREE.Raycaster();
@@ -471,6 +476,9 @@ class MyScene extends THREE.Scene {
                     this.mesa.jarronMesa.explotaCorazon();
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
                     this.caja2.luminosidadCaja();
+                    //this.candidates.remove();
+                    this.candidates.splice(this.boxIndex);
+                    console.log(this.candidates)
                 } else if(selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
 
@@ -492,6 +500,13 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    click(event){
+        if(event.button !== 2){
+            this.pick();
+        } else {
+            this.controlLantern();
+        }
+    }
     async showAlert(message) {
         let alert = document.getElementById("alert");
         alert.style.display = "flex";
@@ -518,6 +533,18 @@ class MyScene extends THREE.Scene {
             this.pared3.material = new THREE.MeshPhongMaterial({map: textureAux, bumpMap: textureBump, bumpScale: 1});
             this.pared3.geometry.uvsNeedUpdate = true;
             this.remove(this.lampara1Light);
+        }
+    }
+
+    controlLantern() {
+        if(this.animateLinterna === 0){
+            if(this.linternaControl){
+                this.camera.remove(this.Luzlinterna);
+                this.linternaControl = !this.linternaControl;
+            } else {
+                this.camera.add(this.Luzlinterna);
+                this.linternaControl = !this.linternaControl;
+            }
         }
     }
 
@@ -556,6 +583,12 @@ class MyScene extends THREE.Scene {
             let cajaCama = new THREE.Box3().setFromObject(this.cama);
             this.candidates.push(cajaCama);
             this.cajaAdd = true;
+        }
+        if (this.sillon.box.max.x !== -Infinity && !this.sillonAdd) {
+            let cajaSillon = new THREE.Box3().setFromObject(this.sillon);
+            this.candidates.push(cajaSillon);
+            this.sillonAdd = true;
+            console.log("")
         }
         if (this.model.cajaPuerta.max.x !== -Infinity && !this.cajaPuertaAdd) {
             console.log("caja puerta");
@@ -608,7 +641,7 @@ $(function () {
     window.addEventListener("resize", () => scene.onWindowResize());
     window.addEventListener('keydown', (event) => scene.mover(event));
     window.addEventListener('keyup', (event) => scene.parar(event));
-    window.addEventListener('click', (event) => scene.pick(event));
+    window.addEventListener('click', (event) => scene.click(event));
     const boton = document.getElementById("button");
     boton.addEventListener('click', () => scene.comprobarClave());
 
