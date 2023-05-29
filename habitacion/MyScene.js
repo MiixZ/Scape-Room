@@ -18,6 +18,7 @@ import {Globo} from '../globo/globo.js';
 import {lamparastecho} from "./lampara_techo.js";
 import {caja} from "./caja.js";
 import {sillon} from "./sillon.js";
+import {linterna} from "./linterna.js";
 
 /// La clase fachada del modelo
 /**
@@ -71,6 +72,8 @@ class MyScene extends THREE.Scene {
             let cajaHabitacion = new THREE.Box3().setFromObject(this.model.getObjectByName(name));
             this.candidates.push(cajaHabitacion);
         }
+
+        this.animateLinterna = 1;
 
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
         this.pickeableObjects.push(this.model.getObjectByName("pared4"));
@@ -129,6 +132,12 @@ class MyScene extends THREE.Scene {
         this.sillon.rotateY(-Math.PI / 4);
         this.add(this.sillon);
 
+        this.linterna = new linterna();
+        this.linterna.position.set(this.sillon.position.x - 45, this.sillon.position.y + 75, this.sillon.position.z + 75);
+        this.linterna.rotateX(Math.PI);
+        this.pickeableObjects.push(this.linterna);
+        this.add(this.linterna);
+
         this.cama = new cama();
         this.add(this.cama);
 
@@ -186,7 +195,9 @@ class MyScene extends THREE.Scene {
 
         this.caja3 = new caja();
         this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
-        this.add(this.caja3);// Caja random.
+        let cajaCaja3 = new THREE.Box3().setFromObject(this.caja3);
+        this.candidates.push(cajaCaja3);
+        this.add(this.caja3); // Caja random.
     }
 
     createCamera() {
@@ -253,9 +264,9 @@ class MyScene extends THREE.Scene {
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como var y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.3);
+        this.ambientLight = new THREE.AmbientLight(0xccddee, 0);
         // La añadimos a la escena
-        this.add(ambientLight);
+        this.add(this.ambientLight);
 
         // Se crea una luz focal que va a ser la luz principal de la escena
         // La luz focal, además tiene una posición, y un punto de mira
@@ -264,13 +275,13 @@ class MyScene extends THREE.Scene {
 
         this.lampara1Light = new THREE.SpotLight(0x03FA15, 1);
         this.lampara1Light.position.set(this.WidthH / 2 - this.lampara.RadiusBase, this.lampara.cabeza.position.y,
-            this.DepthH / 2 - this.lampara.RadiusBase);
+                                    this.DepthH / 2 - this.lampara.RadiusBase);
         this.lampara1Light.target = this.lampara;
         this.lampara1Light.penumbra = 1;
 
         this.lampara2Light = new THREE.SpotLight(0x03FA15, 1);
         this.lampara2Light.position.set(this.lampara2.position.x, this.lampara2.cabeza.position.y,
-            this.lampara2.position.z);
+                                        this.lampara2.position.z);
         this.lampara2Light.target = this.lampara2;
         this.lampara2Light.penumbra = 1;
 
@@ -287,7 +298,27 @@ class MyScene extends THREE.Scene {
         this.LightMesa.target = this.mesa;
         this.LightMesa.penumbra = 0.5;
 
+        this.LightLinterna = new THREE.SpotLight(0xffffff, 1);
+        this.LightLinterna.position.set(this.linterna.position.x, this.linterna.position.y + 100, this.linterna.position.z);
+        this.LightLinterna.target = this.linterna;
+        this.LightLinterna.penumbra = 1;
+        this.LightLinterna.angle = Math.PI / 4;
+        this.add(this.LightLinterna);
+
         this.add(this.LightMesa);
+    }
+
+    activateLights() {
+        this.camera.add(this.linterna);
+        this.linterna.position.set(15, -15, -30);
+        this.linterna.rotation.set(Math.PI, 0, 0);
+        this.remove(this.LightLinterna);
+
+        this.Luzlinterna = new THREE.SpotLight(0xffffff, 0.4);
+        this.Luzlinterna.position.set(this.linterna.position.x, this.linterna.position.y, this.linterna.position.z + 200);
+        this.Luzlinterna.target = this.linterna;
+        this.Luzlinterna.angle = Math.PI / 15;
+        this.camera.add(this.Luzlinterna);
     }
 
     createRenderer(myCanvas) {
@@ -320,6 +351,11 @@ class MyScene extends THREE.Scene {
         this.camera.aspect = ratio;
         // Y si se cambia ese dato hay que actualizar la matriz de proyección de la cámara
         this.camera.updateProjectionMatrix();
+    }
+
+    animarLinterna () {
+        this.linterna.rotation.y += 0.01;
+        this.linterna.rotation.x += 0.01;
     }
 
     onWindowResize() {
@@ -366,7 +402,6 @@ class MyScene extends THREE.Scene {
                     break;
             }
         }
-
     }
 
     parar(evento) {
@@ -433,14 +468,18 @@ class MyScene extends THREE.Scene {
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
                     console.log("caja si o si");
                     this.caja2.luminosidadCaja();
-                } else if(selectedObject.parent.name === "lampara2" && distance < 350){
+                } else if(selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
 
-                    if(this.lampara2Control){
+                    if(this.lampara2Control) {
                         this.add(this.lampara2Light);
                     } else {
                         this.remove(this.lampara2Light);
                     }
+                } else if (selectedObject.name === "Lanterna_Cylinder") {
+                    this.activateLights();
+                    this.remove(this.linterna);
+                    this.animateLinterna = 0;
                 }
             }
         } else if(this.afterPanel){
@@ -460,7 +499,7 @@ class MyScene extends THREE.Scene {
     }
 
     controlLamp() {
-        if (this.lamparaControl) {
+        if(this.lamparaControl) {
             let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve_5.jpg');
             let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
 
@@ -529,6 +568,10 @@ class MyScene extends THREE.Scene {
         this.CameraControl.moveForward(this.zdir * this.velocidad * this.deltaT);
         this.CameraControl.moveRight(this.xdir * this.velocidad * this.deltaT);
         this.tiempoI = this.tiempoF;
+
+        if(this.animateLinterna === 1) {
+            this.animarLinterna();
+        }
 
         this.model.update();
         this.flexo.update();

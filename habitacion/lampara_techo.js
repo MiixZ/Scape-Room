@@ -48,7 +48,7 @@ class lamparastecho extends THREE.Object3D {
         this.light.decay = 0.5;
         this.light.position.y = -12.5;
 
-        palo.add(foco, this.bombilla, this.light);
+        palo.add(foco, this.bombilla);
 
         return palo;
     }
