@@ -404,6 +404,10 @@ class MyScene extends THREE.Scene {
                     this.CameraControl.lock();
                     break;
 
+                case 'q':
+                    this.controlLantern();
+                    break;
+
                 default:
                     break;
             }
@@ -486,6 +490,7 @@ class MyScene extends THREE.Scene {
                     this.activateLights();
                     this.remove(this.linterna);
                     this.animateLinterna = 0;
+                    this.showAlert("¿Que pasará si pulso la \"Q\"?")
                 } else if ((selectedObject.parent.name === "caja1" || selectedObject.parent.name === "caja3") && distance < 350) {
                     this.showAlert("Esta caja no se abre, pero parece muy real...");
                 }
@@ -495,13 +500,7 @@ class MyScene extends THREE.Scene {
         }
     }
 
-    click(event){
-        if(event.button !== 2){
-            this.pick();
-        } else {
-            this.controlLantern();
-        }
-    }
+
     async showAlert(message) {
         let alert = document.getElementById("alert");
         alert.style.display = "flex";
@@ -636,7 +635,7 @@ $(function () {
     window.addEventListener("resize", () => scene.onWindowResize());
     window.addEventListener('keydown', (event) => scene.mover(event));
     window.addEventListener('keyup', (event) => scene.parar(event));
-    window.addEventListener('click', (event) => scene.click(event));
+    window.addEventListener('click', (event) => scene.pick());
     const boton = document.getElementById("button");
     boton.addEventListener('click', () => scene.comprobarClave());
 
