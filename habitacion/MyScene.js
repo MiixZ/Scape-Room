@@ -184,6 +184,8 @@ class MyScene extends THREE.Scene {
     createCajas() {
         this.caja = new caja();
         this.caja.position.set(-this.WidthH / 2 + 100, 95, 0);
+        this.caja.name = "caja1";
+        this.pickeableObjects.push(this.caja);
         this.add(this.caja);            // Caja de la cama.
 
         this.caja2 = new caja();
@@ -196,6 +198,8 @@ class MyScene extends THREE.Scene {
         this.caja3 = new caja();
         this.caja3.position.set(-this.lampara.position.x, 25, this.lampara.position.z);
         let cajaCaja3 = new THREE.Box3().setFromObject(this.caja3);
+        this.caja3.name = "caja3";
+        this.pickeableObjects.push(this.caja3);
         this.candidates.push(cajaCaja3);
         this.add(this.caja3); // Caja random.
     }
@@ -314,7 +318,7 @@ class MyScene extends THREE.Scene {
         this.linterna.rotation.set(Math.PI, 0, 0);
         this.remove(this.LightLinterna);
 
-        this.Luzlinterna = new THREE.SpotLight(0xffffff, 0.4);
+        this.Luzlinterna = new THREE.SpotLight(0xffffff, 0.2);
         this.Luzlinterna.position.set(this.linterna.position.x, this.linterna.position.y, this.linterna.position.z + 200);
         this.Luzlinterna.target = this.linterna;
         this.Luzlinterna.angle = Math.PI / 15;
@@ -466,7 +470,6 @@ class MyScene extends THREE.Scene {
                     this.globo.animacion();
                     this.mesa.jarronMesa.explotaCorazon();
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
-                    console.log("caja si o si");
                     this.caja2.luminosidadCaja();
                 } else if(selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
@@ -480,6 +483,8 @@ class MyScene extends THREE.Scene {
                     this.activateLights();
                     this.remove(this.linterna);
                     this.animateLinterna = 0;
+                } else if ((selectedObject.parent.name === "caja1" || selectedObject.parent.name === "caja3") && distance < 350) {
+                    this.showAlert("Esta caja no se abre, pero parece muy real...");
                 }
             }
         } else if(this.afterPanel){
