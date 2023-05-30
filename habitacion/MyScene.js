@@ -174,8 +174,7 @@ class MyScene extends THREE.Scene {
 
         let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
         this.candidates.push(cajaPuerta);
-
-        console.log(this.pickeableObjects);
+        this.indexCajaPuerta = this.candidates.length-1
     }
 
     initStats() {
@@ -643,9 +642,11 @@ class MyScene extends THREE.Scene {
             this.sillonAdd = true;
             console.log("")
         }
-        if (this.model.cajaPuerta.max.x !== -Infinity && !this.cajaPuertaAdd) {
-            console.log("caja puerta");
-            this.candidates.pop();
+        if (this.model.cajaPuerta.max.x !== -Infinity && this.cajaPuertaAdd === false) {
+            this.candidates.splice(this.indexCajaPuerta,1);
+            this.cajaPuertaAdd = true;
+            let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
+            this.candidates.push(cajaPuerta);
         }
         // console.log(this.cama.box);
         // Se actualizan los elementos de la escena para cada frame.
