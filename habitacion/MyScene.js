@@ -19,6 +19,7 @@ import {lamparastecho} from "./lampara_techo.js";
 import {caja} from "./caja.js";
 import {sillon} from "./sillon.js";
 import {linterna} from "./linterna.js";
+import {cuadro} from "./cuadro.js";
 
 /// La clase fachada del modelo
 /**
@@ -145,6 +146,10 @@ class MyScene extends THREE.Scene {
         this.cama = new cama();
         this.add(this.cama);
 
+        this.cuadro = new cuadro();
+        this.add(this.cuadro);
+        this.cuadro.video.play();
+
         this.flexo = new flexo();
         this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
         this.add(this.flexo);
@@ -163,6 +168,7 @@ class MyScene extends THREE.Scene {
 
         this.createLights();
         this.createBody();
+        this.createGround();
 
         let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
         this.candidates.push(cajaPuerta);
@@ -210,8 +216,8 @@ class MyScene extends THREE.Scene {
     }
 
     createCamera() {
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.camera.position.set(0, this.cameraHeight, -20);
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
+        this.camera.position.set(0, this.cameraHeight, 0);
         this.CameraControl = new PointerLockControls(this.camera, this.renderer.domElement);
 
         this.xdir = 0;
@@ -348,6 +354,34 @@ class MyScene extends THREE.Scene {
         return renderer;
     }
 
+    createGround (){
+        // El suelo es un Mesh, necesita una geometría y un material.
+
+        // La geometría es una caja con muy poca altura
+        var geometryGround = new THREE.BoxGeometry (10000,0.2,10000);
+
+        // El material se hará con una textura de madera
+        var texture = new THREE.TextureLoader().load('../imgs/cesped.jpg');
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(100, 100);
+        var materialGround = new THREE.MeshPhongMaterial ({map: texture});
+
+        // Ya se puede construir el Mesh
+        var ground = new THREE.Mesh (geometryGround, materialGround);
+        var ground2 = new THREE.Mesh (geometryGround, materialGround);
+        var ground3 = new THREE.Mesh (geometryGround, materialGround);
+
+        // Todas las figuras se crean centradas en el origen.
+        // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
+        ground.position.set(0, -0.1, -this.DepthH / 2 - 5005);
+        ground2.position.set(this.WidthH / 2 + 5000, -0.1, 4245);
+        ground3.position.set(-this.WidthH / 2 - 5000, -0.1, 4245);
+
+        // Que no se nos olvide añadirlo a la escena, que en este caso es  this
+        this.add (ground, ground2, ground3);
+    }
+
     getCamera() {
         // En principio se devuelve la única cámara que tenemos
         // Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
@@ -462,6 +496,7 @@ class MyScene extends THREE.Scene {
                         this.showAlert("Parece que la puerta está cerrada...");
                     } else {
                         this.model.animacionAbrir();
+                        this.ambientLight.intensity = 0.5;
                         this.showAlert("La puerta se está abriendo");
                     }
                 } else if (selectedObject.name === "candado" && distance < 350 && !this.doorUnlocked) {
@@ -564,7 +599,9 @@ class MyScene extends THREE.Scene {
         let num2 = document.getElementById("num2").value;
         let num3 = document.getElementById("num3").value;
 
-        if (num1 === 5 && num2 === 8 && num3 === 0) {
+        console.log(num1, num2, num3);
+
+        if (num1 === '5' && num2 === '8' && num3 === '0') {
             this.doorUnlocked = true;
             this.showAlert("He encontrado la clave correcta");
             this.model.deleteCandado = true;
