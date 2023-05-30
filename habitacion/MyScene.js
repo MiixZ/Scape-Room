@@ -470,12 +470,12 @@ class MyScene extends THREE.Scene {
                     this.lamparaControl = !this.lamparaControl;
                     this.controlLamp();
                 } else if (selectedObject.name === "jarron" && distance < 350) {
-                    if(this.animacionJarron) {
+                    if(this.animacionJarron && !this.linternaControl) {
                         this.mesa.jarronMesa.animacionCorazon();
                         this.animacionJarron = false;
                     }
                 } else if (selectedObject.name === "corazon" && distance < 350) {
-                    if(this.animacionGlobo) {
+                    if(this.animacionGlobo && !this.linternaControl) {
                         this.globo.animacion();
                         this.mesa.jarronMesa.explotaCorazon();
                         this.animacionGlobo = false;
@@ -497,6 +497,8 @@ class MyScene extends THREE.Scene {
                     this.activateLights();
                     this.remove(this.linterna);
                     this.animateLinterna = 0;
+                    // La lámpara de la mesa cambia a color marrón.
+                    this.LightMesa.color = new THREE.Color(0.2, 0.5, 0.2);
                 } else if ((selectedObject.parent.name === "caja1" || selectedObject.parent.name === "caja3") && distance < 350) {
                     this.showAlert("Esta caja no se abre, pero parece muy real...");
                 }
@@ -544,12 +546,16 @@ class MyScene extends THREE.Scene {
 
     controlLantern() {
         if(this.animateLinterna === 0){
-            if(this.linternaControl){
+            if(this.linternaControl) {
                 this.camera.remove(this.Luzlinterna);
                 this.linternaControl = !this.linternaControl;
+                // La luz de la mesa vuelve a ser roja.
+                this.LightMesa.color = new THREE.Color(0xff0055);
             } else {
                 this.camera.add(this.Luzlinterna);
                 this.linternaControl = !this.linternaControl;
+                // La luz de la mesa vuelve a ser marrón.
+                this.LightMesa.color = new THREE.Color(0.2, 0.5, 0.2);
             }
         }
     }
