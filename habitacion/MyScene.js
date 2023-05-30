@@ -74,6 +74,9 @@ class MyScene extends THREE.Scene {
         }
 
         this.animateLinterna = 1;
+        this.animacionCaja = true;
+        this.animacionJarron = true;
+        this.animacionGlobo = true;
 
         this.pickeableObjects.push(this.model.getObjectByName("puerta").getObjectByName("pomo"));
         this.pickeableObjects.push(this.model.getObjectByName("pared4"));
@@ -467,14 +470,22 @@ class MyScene extends THREE.Scene {
                     this.lamparaControl = !this.lamparaControl;
                     this.controlLamp();
                 } else if (selectedObject.name === "jarron" && distance < 350) {
-                    this.mesa.jarronMesa.animacionCorazon();
+                    if(this.animacionJarron) {
+                        this.mesa.jarronMesa.animacionCorazon();
+                        this.animacionJarron = false;
+                    }
                 } else if (selectedObject.name === "corazon" && distance < 350) {
-                    this.globo.animacion();
-                    this.mesa.jarronMesa.explotaCorazon();
+                    if(this.animacionGlobo) {
+                        this.globo.animacion();
+                        this.mesa.jarronMesa.explotaCorazon();
+                        this.animacionGlobo = false;
+                    }
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
-                    this.caja2.luminosidadCaja();
-                    console.log(this.candidates)
-                } else if(selectedObject.parent.name === "lampara2" && distance < 350) {
+                    if(this.animacionCaja) {
+                        this.caja2.luminosidadCaja();
+                        this.animacionCaja = false;
+                    }
+                } else if (selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
 
                     if(this.lampara2Control) {
@@ -490,13 +501,13 @@ class MyScene extends THREE.Scene {
                     this.showAlert("Esta caja no se abre, pero parece muy real...");
                 }
             }
-        } else if(this.afterPanel){
+        } else if(this.afterPanel) {
             this.afterPanel = false;
         }
     }
 
     click(event){
-        if(event.button !== 2){
+        if(event.button !== 2) {
             this.pick();
         } else {
             this.controlLantern();
@@ -548,7 +559,7 @@ class MyScene extends THREE.Scene {
         let num2 = document.getElementById("num2").value;
         let num3 = document.getElementById("num3").value;
 
-        if (num1 == 5 && num2 == 8 && num3 == 0) {
+        if (num1 === 5 && num2 === 8 && num3 === 0) {
             this.doorUnlocked = true;
             this.showAlert("He encontrado la clave correcta");
             this.model.deleteCandado = true;
