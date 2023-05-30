@@ -147,8 +147,10 @@ class MyScene extends THREE.Scene {
         this.add(this.cama);
 
         this.cuadro = new cuadro();
+        this.cuadro.name = "cuadro";
+        this.pickeableObjects.push(this.cuadro);
+        this.cuadro.position.set(0, this.HeightH / 2, this.DepthH / 2 - 5);
         this.add(this.cuadro);
-        this.cuadro.video.play();
 
         this.flexo = new flexo();
         this.flexo.position.set(this.WidthH / 2 - 70, this.mesa.mesaHeight + 1, -100);
@@ -520,14 +522,14 @@ class MyScene extends THREE.Scene {
                         this.animacionGlobo = false;
                     }
                 } else if (selectedObject.parent.name === "caja" && distance < 350) {
-                    if(this.animacionCaja) {
+                    if (this.animacionCaja) {
                         this.caja2.luminosidadCaja();
                         this.animacionCaja = false;
                     }
                 } else if (selectedObject.parent.name === "lampara2" && distance < 350) {
                     this.lampara2Control = !this.lampara2Control;
 
-                    if(this.lampara2Control) {
+                    if (this.lampara2Control) {
                         this.add(this.lampara2Light);
                     } else {
                         this.remove(this.lampara2Light);
@@ -541,6 +543,9 @@ class MyScene extends THREE.Scene {
                     this.showAlert("¿Que pasará si pulso la \"Q\"?")
                 } else if ((selectedObject.parent.name === "caja1" || selectedObject.parent.name === "caja3") && distance < 350) {
                     this.showAlert("Esta caja no se abre, pero parece muy real...");
+                } else if (selectedObject.parent.parent.name === "cuadro") {
+                    this.cuadro.video.play();
+                    this.cuadro.video.muted = true;
                 }
             }
         } else if(this.afterPanel) {
