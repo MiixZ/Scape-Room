@@ -38,6 +38,7 @@ class MyScene extends THREE.Scene {
     afterPanel = false;
     cajaPuertaAdd = false;
     sillonAdd = false;
+
     constructor(myCanvas) {
         super();
         this.pickeableObjects = [];
