@@ -363,7 +363,7 @@ class MyScene extends THREE.Scene {
         var geometryGround = new THREE.BoxGeometry (10000,0.2,10000);
 
         // El material se hará con una textura de madera
-        var texture = new THREE.TextureLoader().load('../imgs/cesped.jpg');
+        var texture = new THREE.TextureLoader().load('./imgs/cesped.jpg');
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(100, 100);
@@ -563,15 +563,15 @@ class MyScene extends THREE.Scene {
 
     controlLamp() {
         if(this.lamparaControl) {
-            let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve_5.jpg');
-            let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
+            let textureAux = new THREE.TextureLoader().load('./imgs/base_relieve_5.jpg');
+            let textureBump = new THREE.TextureLoader().load('./imgs/ladrillo.jpg');
 
             this.pared3.material = new THREE.MeshPhongMaterial({map: textureAux, bumpMap: textureBump, bumpScale: 1});
             this.pared3.geometry.uvsNeedUpdate = true;
             this.add(this.lampara1Light);
         } else {
-            let textureAux = new THREE.TextureLoader().load('../imgs/base_relieve.jpg');
-            let textureBump = new THREE.TextureLoader().load('../imgs/ladrillo.jpg');
+            let textureAux = new THREE.TextureLoader().load('./imgs/base_relieve.jpg');
+            let textureBump = new THREE.TextureLoader().load('./imgs/ladrillo.jpg');
 
             this.pared3.material = new THREE.MeshPhongMaterial({map: textureAux, bumpMap: textureBump, bumpScale: 1});
             this.pared3.geometry.uvsNeedUpdate = true;
