@@ -544,7 +544,7 @@ class MyScene extends THREE.Scene {
                     this.showAlert("Esta caja no se abre, pero parece muy real...");
                 } else if (selectedObject.parent.parent.name === "cuadro") {
                     this.cuadro.video.play();
-                    this.cuadro.video.muted = true;
+                    this.cuadro.video.volume = 0.1;
                 }
             }
         } else if(this.afterPanel) {

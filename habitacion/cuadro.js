@@ -16,7 +16,6 @@ class cuadro extends THREE.Object3D {
         this.video = document.createElement('video');
         this.video.crossOrigin = 'anonymous';
         this.video.preload = '';
-        this.video.loop = true;
         this.video.src = '../imgs/bisbal.mp4';
         this.video.load();
 
