@@ -491,8 +491,6 @@ class MyScene extends THREE.Scene {
                 let selectedObject = pickedObjects[0].object;
                 //let selectedPoint = pickedObjects[0].point;
                 let distance = pickedObjects[0].distance;
-                console.log("seleccionado: ")
-                console.log(selectedObject);
                 if (selectedObject.name === "pomo" && distance < 350) {
                     if(!this.doorUnlocked) {
                         this.showAlert("Parece que la puerta está cerrada...");
@@ -505,8 +503,6 @@ class MyScene extends THREE.Scene {
                     this.panelClave = true;
                     this.showAlert("Me pregunto cual será la combinación, quiero salir de aquí");
                     this.mostrarContenedorClave();
-                    // this.remove(this.candado);
-                    console.log(this.model.puerta);
                 } else if (selectedObject.parent.name === "lampara" && distance < 350) {
                     this.lamparaControl = !this.lamparaControl;
                     this.controlLamp();
@@ -604,7 +600,6 @@ class MyScene extends THREE.Scene {
         let num2 = document.getElementById("num2").value;
         let num3 = document.getElementById("num3").value;
 
-        console.log(num1, num2, num3);
 
         if (num1 === '5' && num2 === '8' && num3 === '0') {
             this.doorUnlocked = true;
@@ -649,12 +644,9 @@ class MyScene extends THREE.Scene {
             let cajaPuerta = new THREE.Box3().setFromObject(this.model.getObjectByName("puerta"));
             this.candidates.push(cajaPuerta);
         }
-        // console.log(this.cama.box);
-        // Se actualizan los elementos de la escena para cada frame.
-        //if(this.cont == this.maxCont){
+
         this.body.getWorldPosition(this.previousPosition);
         this.cont = 0;
-        //}
         this.cont++;
         this.tiempoF = Date.now();
         this.deltaT = (this.tiempoF - this.tiempoI) / 1000;
