@@ -8,18 +8,18 @@ import * as TWEEN from '../libs/tween.esm.js';
 
 
 // Clases de nuestro proyecto
-import {mesa} from '../mesa/mesa.js'
-import {habitacion} from './habitacion.js'
-import {lampara} from './lampara.js'
-import {foco} from './foco.js'
-import {cama} from './cama.js';
-import {flexo} from "./flexo.js";
-import {Globo} from '../globo/globo.js';
-import {lamparastecho} from "./lampara_techo.js";
-import {caja} from "./caja.js";
-import {sillon} from "./sillon.js";
-import {linterna} from "./linterna.js";
-import {cuadro} from "./cuadro.js";
+import {mesa} from './objects/mesa.js'
+import {habitacion} from './objects/habitacion.js'
+import {lampara} from './objects/lampara.js'
+import {foco} from './objects/foco.js'
+import {cama} from './objects/cama.js';
+import {flexo} from "./objects/flexo.js";
+import {Globo} from './objects/globo.js';
+import {lamparastecho} from "./objects/lampara_techo.js";
+import {caja} from "./objects/caja.js";
+import {sillon} from "./objects/sillon.js";
+import {linterna} from "./objects/linterna.js";
+import {cuadro} from "./objects/cuadro.js";
 
 /// La clase fachada del modelo
 /**
