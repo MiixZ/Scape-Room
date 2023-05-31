@@ -1,10 +1,10 @@
 // Clases de la biblioteca
 
-import * as THREE from '../libs/three.module.js'
-import {MeshPhongMaterial} from '../libs/three.module.js'
-import {Stats} from '../libs/stats.module.js'
-import {PointerLockControls} from '../libs/PointerLockControls.js';
-import * as TWEEN from '../libs/tween.esm.js';
+import * as THREE from './libs/three.module.js'
+import {MeshPhongMaterial} from './libs/three.module.js'
+import {Stats} from './libs/stats.module.js'
+import {PointerLockControls} from './libs/PointerLockControls.js';
+import * as TWEEN from './libs/tween.esm.js';
 
 
 // Clases de nuestro proyecto
