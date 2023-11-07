@@ -6,7 +6,6 @@ import {Stats} from './libs/stats.module.js'
 import {PointerLockControls} from './libs/PointerLockControls.js';
 import * as TWEEN from './libs/tween.esm.js';
 
-
 // Clases de nuestro proyecto
 import {mesa} from './objects/mesa.js'
 import {habitacion} from './objects/habitacion.js'
@@ -548,7 +547,6 @@ class MyScene extends THREE.Scene {
             this.afterPanel = false;
         }
     }
-
 
     async showAlert(message) {
         let alert = document.getElementById("alert");
